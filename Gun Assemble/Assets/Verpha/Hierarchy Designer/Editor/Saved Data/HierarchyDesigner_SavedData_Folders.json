@@ -1,0 +1,508 @@
+{
+    "items": [
+        {
+            "Name": "mm",
+            "TextColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "====Manager=====",
+            "TextColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "Lighting and Environment",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "Player",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "Environment System",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "UI Management",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "[DDOL] GUI Common Canvas",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "Camera System",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "Coroutine Managent",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "[DDOL] Common Managements",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "Filter Features",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "[DDOL] GUI Common Popup",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "[DDOL] CoreSystems",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "Timelines",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "TimelineFolders",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "TRIGGER IMPORTANT POINTS",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "CAMERA & LIGHT SYSTEMS",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "POINTERS IN MAP",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "ARTIST OBJECTS",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "ARCHTECH_WebGL_Plugins",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "WayPointPaths.Crowded.Thinly",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "WayPointPaths.Crowded.Heavily",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "WayPointPaths.Crowded.Sparsely",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "WayPointPaths.Crowded.Densely",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "WayPointPaths.Crowded.Moderately",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "Modules",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "PolicyPoint",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        },
+        {
+            "Name": "ARCHTECH SHIPRUSH MODULE CORES",
+            "TextColor": {
+                "r": 1.0,
+                "g": 0.7568628191947937,
+                "b": 0.027450982481241227,
+                "a": 1.0
+            },
+            "FontSize": 12,
+            "FontStyle": 0,
+            "ImageColor": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0,
+                "a": 1.0
+            },
+            "ImageType": 0
+        }
+    ]
+}
