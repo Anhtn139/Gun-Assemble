@@ -10464,6 +10464,7 @@ MonoBehaviour:
         DebugActive: 0
         TargetGameObject: {fileID: 1018883284677772756}
         ExtraTargetGameObjects: []
+        IgnorePlayDirection: 0
         SetStateOnInit: 1
         StateOnInit: 0
         SetStateOnPlay: 1
@@ -10914,6 +10915,7 @@ MonoBehaviour:
         DebugActive: 0
         TargetGameObject: {fileID: 1018883284677772756}
         ExtraTargetGameObjects: []
+        IgnorePlayDirection: 0
         SetStateOnInit: 1
         StateOnInit: 0
         SetStateOnPlay: 1
