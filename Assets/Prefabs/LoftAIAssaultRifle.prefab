@@ -336,6 +336,7 @@ MonoBehaviour:
   ProjectileTargetLayerMask:
     serializedVersion: 2
     m_Bits: 8192
+  PrintProjectileHitNames: 1
   TestShootButton: 0
 --- !u!95 &95051391410759500
 Animator:

@@ -367,6 +367,7 @@ MonoBehaviour:
   ProjectileTargetLayerMask:
     serializedVersion: 2
     m_Bits: 8192
+  PrintProjectileHitNames: 1
   TestShootButton: 0
 --- !u!95 &95333093895194968
 Animator:
@@ -409,7 +410,7 @@ MonoBehaviour:
   MinimumAngle: -180
   MaximumAngle: 180
   MinimumMagnitude: 0.2
-  ReticleType: 2
+  ReticleType: 0
   Reticle: {fileID: 1373789777524232, guid: 65207112181da7b41bee2bb13af8b883, type: 3}
   ReticleDistance: 0
   ReticleHeight: 0
