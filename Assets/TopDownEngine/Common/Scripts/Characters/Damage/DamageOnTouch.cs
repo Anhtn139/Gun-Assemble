@@ -172,6 +172,10 @@ namespace MoreMountains.TopDownEngine
 		/// an event to trigger when hitting anything
 		public UnityEvent<GameObject> HitAnythingEvent;
 
+		[Header("Debug")]
+		[Tooltip("If true will print the name of the object hit to the console.")]
+		public bool PrintHitNames = true;
+
 		// storage		
 		protected Vector3 _lastPosition, _lastDamagePosition, _velocity, _knockbackForce, _damageDirection;
 		protected float _startTime = 0f;
@@ -580,6 +584,12 @@ namespace MoreMountains.TopDownEngine
 			if (!EvaluateAvailability(collider))
 			{
 				return;
+			}
+
+			// print name when hit if enabled
+			if (PrintHitNames)
+			{
+				Debug.Log(this.name + " hit " + (collider != null ? collider.name : "null"));
 			}
 
 			// cache reset 

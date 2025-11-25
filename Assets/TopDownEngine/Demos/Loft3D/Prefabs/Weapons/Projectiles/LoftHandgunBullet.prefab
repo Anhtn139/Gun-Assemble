@@ -5099,6 +5099,7 @@ MonoBehaviour:
   HitAnythingEvent:
     m_PersistentCalls:
       m_Calls: []
+  PrintHitNames: 0
 --- !u!65 &65720217773407688
 BoxCollider:
   m_ObjectHideFlags: 0

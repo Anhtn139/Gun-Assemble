@@ -25,6 +25,14 @@ namespace MoreMountains.TopDownEngine
 		[Tooltip("Nếu Destination null, script sẽ cố gắng tìm GameObject tag 'Player' mỗi khoảng thời gian này (s)")]
 		public float TryFindPlayerInterval = 1f;
 
+		[Header("Attack")]
+		[Tooltip("Khoảng cách (m) mà AI sẽ bắt đầu tấn công mục tiêu")]
+		public float AttackRange = 2f;
+		[Tooltip("Hysteresis (m) để tránh bật/tắt tấn công liên tục khi ở sát ngưỡng")]
+		public float AttackHysteresis = 0.5f;
+		[Tooltip("Nếu trống, sẽ tìm CharacterHandleWeapon trong Character")]
+		public CharacterHandleWeapon TargetHandleWeaponAbility;
+
 		protected CharacterPathfinder3D _characterPathfinder3D;
 		protected Plane _playerPlane;
 		protected bool _destinationSet = false;
@@ -34,6 +42,9 @@ namespace MoreMountains.TopDownEngine
 		protected Transform _lastDestinationTransform = null;
 		protected Vector3 _lastDestinationPosition = Vector3.positiveInfinity;
 
+		protected Character _character;
+		protected bool _isAttacking = false;
+
 		/// <summary>
 		/// On awake we create a plane to catch our ray
 		/// </summary>
@@ -42,6 +53,12 @@ namespace MoreMountains.TopDownEngine
 			_mainCamera = Camera.main;
 			_characterPathfinder3D = this.gameObject.GetComponent<CharacterPathfinder3D>();
 			_playerPlane = new Plane(Vector3.up, Vector3.zero);
+
+			_character = this.gameObject.GetComponentInParent<Character>();
+			if ((TargetHandleWeaponAbility == null) && (_character != null))
+			{
+				TargetHandleWeaponAbility = _character.FindAbility<CharacterHandleWeapon>();
+			}
 		}
 
 		/// <summary>
@@ -66,6 +83,7 @@ namespace MoreMountains.TopDownEngine
 				StopCoroutine(_updateCoroutine);
 				_updateCoroutine = null;
 			}
+			StopAttack();
 		}
 
 		/// <summary>
@@ -102,6 +120,7 @@ namespace MoreMountains.TopDownEngine
 		/// - starts once
 		/// - uses CharacterPathfinder3D.RefreshInterval and MinimumDelayBeforePollingNavmesh to pace requests
 		/// - only calls SetNewDestination when destination changed significantly (or when mode requires it)
+		/// Additionally: triggers continuous attack when within AttackRange of Destination.
 		/// </summary>
 		IEnumerator UpdatePathRoutine()
 		{
@@ -127,6 +146,32 @@ namespace MoreMountains.TopDownEngine
 
 				Transform destT = Destination.transform;
 				Vector3 destPos = destT.position;
+
+				// --- Attack handling ---
+				float sqrDist = (destPos - this.transform.position).sqrMagnitude;
+				float enterRange = AttackRange;
+				float exitRange = AttackRange + AttackHysteresis;
+				bool withinAttack = sqrDist <= enterRange * enterRange;
+				bool outOfAttack = sqrDist > exitRange * exitRange;
+
+				if (withinAttack && !_isAttacking)
+				{
+					StartAttack();
+				}
+				else if (outOfAttack && _isAttacking)
+				{
+					StopAttack();
+				}
+
+				// If currently attacking, keep triggering ShootStart each interval to ensure continuous fire.
+				if (_isAttacking && (TargetHandleWeaponAbility == null) && (_character != null))
+				{
+					TargetHandleWeaponAbility = _character.FindAbility<CharacterHandleWeapon>();
+				}
+				if (_isAttacking && (TargetHandleWeaponAbility != null))
+				{
+					TargetHandleWeaponAbility.ShootStart();
+				}
 
 				bool shouldUpdate = false;
 
@@ -163,6 +208,42 @@ namespace MoreMountains.TopDownEngine
 				refreshInterval = Mathf.Max(minDelay, _characterPathfinder3D.RefreshInterval);
 				yield return new WaitForSeconds(refreshInterval);
 			}
+		}
+
+		/// <summary>
+		/// Start attack: trigger weapon shoot. Movement is NOT stopped so AI can keep moving while firing.
+		/// </summary>
+		protected virtual void StartAttack()
+		{
+			if (_isAttacking) return;
+
+			// try to find handle weapon ability if needed
+			if ((TargetHandleWeaponAbility == null) && (_character != null))
+			{
+				TargetHandleWeaponAbility = _character.FindAbility<CharacterHandleWeapon>();
+			}
+
+			_isAttacking = true;
+
+			if (TargetHandleWeaponAbility != null)
+			{
+				TargetHandleWeaponAbility.ShootStart();
+			}
+		}
+
+		/// <summary>
+		/// Stop attack: stop weapon firing. Movement is unchanged.
+		/// </summary>
+		protected virtual void StopAttack()
+		{
+			if (!_isAttacking) return;
+
+			if (TargetHandleWeaponAbility != null)
+			{
+				TargetHandleWeaponAbility.ForceStop();
+			}
+
+			_isAttacking = false;
 		}
 	}
 }

@@ -36,6 +36,7 @@ namespace MoreMountains.TopDownEngine
 		/// The mobile buttons
 		[Tooltip("The mobile buttons")]
 		public CanvasGroup Buttons;
+		public bool ShowButtons = true;
 		/// The mobile arrows
 		[Tooltip("The mobile arrows")]
 		public CanvasGroup Arrows;
@@ -167,7 +168,7 @@ namespace MoreMountains.TopDownEngine
 				}
 			}
 
-			if (Buttons != null)
+			if (Buttons != null && ShowButtons)
 			{
 				Buttons.gameObject.SetActive(state);
 				if (state)

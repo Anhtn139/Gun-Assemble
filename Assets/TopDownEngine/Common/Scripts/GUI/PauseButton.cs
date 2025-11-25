@@ -10,14 +10,16 @@ namespace MoreMountains.TopDownEngine
 	[AddComponentMenu("TopDown Engine/GUI/Pause Button")]
 	public class PauseButton : TopDownMonoBehaviour
 	{
+		[SerializeField] GameObject pauseMenu;
 		/// <summary>
 		/// Triggers a pause event
 		/// </summary>
 		public virtual void PauseButtonAction()
 		{
 			// we trigger a Pause event for the GameManager and other classes that could be listening to it too
-			StartCoroutine(PauseButtonCo());
-
+			/*StartCoroutine(PauseButtonCo());*/
+			Time.timeScale = 0;
+			pauseMenu.SetActive(true);
 		}	
 
 		/// <summary>
@@ -25,7 +27,9 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		public virtual void UnPause()
 		{
-			StartCoroutine(PauseButtonCo());
+			/*StartCoroutine(PauseButtonCo());*/
+			Time.timeScale = 1;
+			pauseMenu.SetActive(false);
 		}
 
 		/// <summary>
