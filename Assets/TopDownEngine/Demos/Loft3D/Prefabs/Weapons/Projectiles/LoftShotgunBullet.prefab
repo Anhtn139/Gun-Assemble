@@ -5099,6 +5099,7 @@ MonoBehaviour:
   HitAnythingEvent:
     m_PersistentCalls:
       m_Calls: []
+  PrintHitNames: 0
 --- !u!65 &65720217773407688
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10466,6 +10467,7 @@ MonoBehaviour:
         DebugActive: 0
         TargetGameObject: {fileID: 816670259895701369}
         ExtraTargetGameObjects: []
+        IgnorePlayDirection: 0
         SetStateOnInit: 1
         StateOnInit: 0
         SetStateOnPlay: 1
@@ -10990,6 +10992,7 @@ MonoBehaviour:
         DebugActive: 0
         TargetGameObject: {fileID: 816670259895701369}
         ExtraTargetGameObjects: []
+        IgnorePlayDirection: 0
         SetStateOnInit: 1
         StateOnInit: 0
         SetStateOnPlay: 1

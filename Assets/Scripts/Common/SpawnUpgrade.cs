@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Spawn : MonoBehaviour
+public class SpawnUpgrade : MonoBehaviour
 {
     [SerializeField] private GameObject upgradePrefab;
     [SerializeField] private BoxCollider spawnZone;
@@ -10,17 +11,14 @@ public class Spawn : MonoBehaviour
     [SerializeField] private float minSpacing = 1f; // khoảng cách tối thiểu giữa các prefab
     [SerializeField] private int maxAttemptsPerSpawn = 20; // số lần thử vị trí cho mỗi prefab
 
+    [Header("Batching")]
+    [SerializeField] private int batchSize = 1; // số prefab spawn mỗi đợt
+    [SerializeField] private float batchInterval = 1f; // thời gian (s) giữa các đợt
+    [SerializeField] private float startDelay = 0f; // delay trước khi bắt đầu đợt đầu
+
+    protected Coroutine _spawnCoroutine = null;
+
     void Start()
-    {
-        SpawnUpgrades();
-    }
-
-    void Update()
-    {
-        
-    }
-
-    private void SpawnUpgrades()
     {
         if (upgradePrefab == null || spawnZone == null)
         {
@@ -28,51 +26,109 @@ public class Spawn : MonoBehaviour
             return;
         }
 
+        _spawnCoroutine = StartCoroutine(SpawnBatchesRoutine());
+    }
+
+    void OnDisable()
+    {
+        if (_spawnCoroutine != null)
+        {
+            StopCoroutine(_spawnCoroutine);
+            _spawnCoroutine = null;
+        }
+    }
+
+    void Update()
+    {
+        
+    }
+
+    private IEnumerator SpawnBatchesRoutine()
+    {
+        if (startDelay > 0f)
+        {
+            yield return new WaitForSeconds(startDelay);
+        }
+
         int minC = Mathf.Max(0, minCount);
         int maxC = Mathf.Max(minC, maxCount);
-
-        int count = Random.Range(minC, maxC + 1);
+        int remaining = Random.Range(minC, maxC + 1);
 
         List<Vector3> spawnedPositions = new List<Vector3>();
         float minSpacingSqr = minSpacing * minSpacing;
 
-        for (int i = 0; i < count; i++)
+        // world-aligned bounds của BoxCollider
+        Bounds bounds = spawnZone.bounds;
+        float minX = bounds.min.x;
+        float maxX = bounds.max.x;
+        float minZ = bounds.min.z;
+        float maxZ = bounds.max.z;
+        float fixedY = bounds.center.y;
+
+        while (remaining > 0)
         {
-            Vector3 chosenPos = Vector3.zero;
-            bool found = false;
+            int toSpawnThisBatch = Mathf.Clamp(batchSize, 1, remaining);
 
-            for (int attempt = 0; attempt < maxAttemptsPerSpawn; attempt++)
+            for (int i = 0; i < toSpawnThisBatch; i++)
             {
-                Vector3 candidate = GetRandomPositionInZone();
+                Vector3 chosenPos = Vector3.zero;
+                bool found = false;
 
-                bool tooClose = false;
-                for (int j = 0; j < spawnedPositions.Count; j++)
+                Vector3 lastCandidate = Vector3.zero;
+                bool attemptedAny = false;
+
+                for (int attempt = 0; attempt < maxAttemptsPerSpawn; attempt++)
                 {
-                    if ((spawnedPositions[j] - candidate).sqrMagnitude < minSpacingSqr)
+                    Vector3 candidate = GetRandomPositionInZone();
+                    attemptedAny = true;
+                    lastCandidate = candidate;
+
+                    bool tooClose = false;
+                    for (int j = 0; j < spawnedPositions.Count; j++)
                     {
-                        tooClose = true;
+                        if ((spawnedPositions[j] - candidate).sqrMagnitude < minSpacingSqr)
+                        {
+                            tooClose = true;
+                            break;
+                        }
+                    }
+
+                    if (!tooClose)
+                    {
+                        chosenPos = candidate;
+                        found = true;
                         break;
                     }
                 }
 
-                if (!tooClose)
+                if (!found)
                 {
-                    chosenPos = candidate;
-                    found = true;
-                    break;
-                }
-            }
+                    // fallback: nếu đã có lần thử thì dùng lastCandidate, nếu không thì center zone
+                    if (attemptedAny)
+                    {
+                        chosenPos = lastCandidate;
+                    }
+                    else
+                    {
+                        Vector3 zoneCenter = spawnZone.bounds.center;
+                        chosenPos = new Vector3(zoneCenter.x, zoneCenter.y, zoneCenter.z);
+                    }
 
-            if (found)
-            {
+                    Debug.LogWarning($"Không tìm được vị trí hợp lệ sau {maxAttemptsPerSpawn} lần thử. Vẫn spawn tại {chosenPos}.");
+                }
+
                 Instantiate(upgradePrefab, chosenPos, Quaternion.identity);
                 spawnedPositions.Add(chosenPos);
+                remaining--;
             }
-            else
+
+            if (remaining > 0)
             {
-                Debug.LogWarning($"Không tìm được vị trí hợp lệ cho prefab #{i + 1} sau {maxAttemptsPerSpawn} lần thử. Bỏ qua.");
+                yield return new WaitForSeconds(batchInterval);
             }
         }
+
+        _spawnCoroutine = null;
     }
 
     private Vector3 GetRandomPositionInZone()

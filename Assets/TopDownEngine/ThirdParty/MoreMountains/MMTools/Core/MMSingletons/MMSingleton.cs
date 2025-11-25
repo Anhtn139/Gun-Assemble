@@ -51,7 +51,6 @@ namespace MoreMountains.Tools
 			{
 				return;
 			}
-
 			_instance = this as T;
 		}
 	}

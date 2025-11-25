@@ -57,6 +57,14 @@ namespace MoreMountains.TopDownEngine
 		[Header("Spawn Feedbacks")]
 		public List<MMFeedbacks> SpawnFeedbacks = new List<MMFeedbacks>();
 
+		[Header("Damage")]
+		[Tooltip("The layer mask that projectiles spawned by this weapon will be allowed to damage.")]
+		public LayerMask ProjectileTargetLayerMask = (1 << 0); // default to layer 0 (can be overridden in inspector)
+
+		[Header("Debug")]
+		[Tooltip("If true, projectiles spawned by this weapon will print the name of the object they hit.")]
+		public bool PrintProjectileHitNames = true;
+
 		protected Vector3 _flippedProjectileSpawnOffset;
 		protected Vector3 _randomSpreadDirection;
 		protected bool _poolInitialized = false;
@@ -155,6 +163,15 @@ namespace MoreMountains.TopDownEngine
 				if (Owner != null)
 				{
 					projectile.SetOwner(Owner.gameObject);
+				}
+
+				// --- set the projectile's DamageOnTouch target layer mask to the weapon's configured mask ---
+				var dot = projectile.TargetDamageOnTouch;
+				if (dot != null)
+				{
+					dot.TargetLayerMask = ProjectileTargetLayerMask;
+					// enable printing of hit object name when projectile hits (configurable)
+					dot.PrintHitNames = PrintProjectileHitNames;
 				}
 			}
 			// we activate the object

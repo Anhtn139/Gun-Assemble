@@ -112,7 +112,7 @@ namespace MoreMountains.Tools
 			{
 				if (Actions[i] != null)
 				{
-					Actions[i].PerformAction();
+					Actions[i]. PerformAction();
 				}
 				else
 				{

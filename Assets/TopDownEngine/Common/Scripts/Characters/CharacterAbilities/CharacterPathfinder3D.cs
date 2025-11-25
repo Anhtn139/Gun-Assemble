@@ -308,7 +308,10 @@ namespace MoreMountains.TopDownEngine
 			
 			_closestStartNavmeshPosition = FindClosestPositionOnNavmesh(startingPosition);
 			_closestTargetNavmeshPosition = FindClosestPositionOnNavmesh(targetPosition);
-
+			if (AgentPath == null)
+			{
+				AgentPath = new NavMeshPath();
+			}
 			_pathFound = NavMesh.CalculatePath(_closestStartNavmeshPosition, _closestTargetNavmeshPosition, AreaMask, AgentPath);
 			if (_pathFound)
 			{
