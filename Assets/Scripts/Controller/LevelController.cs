@@ -5,23 +5,37 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class LoadSignal : ASignal {}
+
+public enum WeaponType
+{
+    Pistol = 0,
+    Shotgun = 1,
+    AR = 2,
+    Sniper = 3,
+    Rocket = 4
+}
 public class LevelController : MMPersistentSingleton<LevelController>
 {
-    
-    private Coroutine coroutine;
+    [SerializeField] private GameObject loadingScreen;
+    public LevelInfo levels;
+    public LevelInfo.LevelCondition CurrentLevelCondition;
     public int CurrentLevel = 1;
-    /*public void NextLevel()
+    public WeaponType CurrentWeapon;
+    private Coroutine coroutine;
+    
+    public void NextLevel()
     {
-        var currentLevel = GameController.GameInstance.levelInfo.LevelName;
-        var nextLevel = int.Parse(currentLevel) + 1;
-        var nextLevelInfo = levels.GetByName(nextLevel.ToString());
-        GameController.GameInstance.levelInfo = nextLevelInfo;
-        GameController.GameInstance.CurrentLevel++;
-        PlayerPrefs.SetInt("CurrentLevel", GameController.GameInstance.CurrentLevel);
+        CurrentLevel = CurrentLevelCondition.LevelName;
+        var nextLevel = CurrentLevel + 1;
+        if (PlayerPrefs.GetInt("CurrentLevel") < nextLevel)
+        {
+            PlayerPrefs.SetInt("CurrentLevel", CurrentLevel);
+        }
+        CurrentLevelCondition = levels.Get(nextLevel);
         ReloadCurrentScene();
     }
         
-    rivate void Start()
+    /*private void Start()
     {
         _countdown = GameController.GameInstance.levelInfo.TimeToComplete;
         StartCoroutine(StartCount());
@@ -42,6 +56,14 @@ public class LevelController : MMPersistentSingleton<LevelController>
         }
     }*/
 
+    private void Start()
+    {
+        Signals.Get<LoadingSignal>().AddOnlyListener(b =>
+        {
+            loadingScreen.gameObject.SetActive(b);
+        });
+    }
+
     public void MainMenu()
     {
         SceneManager.LoadScene("ChooseLevel");
@@ -54,14 +76,12 @@ public class LevelController : MMPersistentSingleton<LevelController>
 
         // Load the scene using its name
         LoadLevel(currentSceneName);
-        /*Signals.Get<ResetCashSignal>().Dispatch();*/
     }
 
     public void LoadLevel(string levelName)
     {
         if (coroutine != null) return;
         coroutine = StartCoroutine(LoadMySceneAsync(levelName));
-        /*Signals.Get<ResetCashSignal>().Dispatch();*/
     }
 
     public IEnumerator LoadMySceneAsync(string sceneName)

@@ -1,0 +1,69 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59ec2822f3246c44db13d243b4bc0d94, type: 3}
+  m_Name: LevelInfo
+  m_EditorClassIdentifier: 
+  levels:
+  - LevelName: 1
+    TotalEnemy: 30
+    TimeToComplete: 300
+  - LevelName: 2
+    TotalEnemy: 40
+    TimeToComplete: 300
+  - LevelName: 3
+    TotalEnemy: 50
+    TimeToComplete: 300
+  - LevelName: 4
+    TotalEnemy: 60
+    TimeToComplete: 300
+  - LevelName: 5
+    TotalEnemy: 70
+    TimeToComplete: 300
+  - LevelName: 6
+    TotalEnemy: 80
+    TimeToComplete: 300
+  - LevelName: 7
+    TotalEnemy: 90
+    TimeToComplete: 300
+  - LevelName: 8
+    TotalEnemy: 100
+    TimeToComplete: 300
+  - LevelName: 9
+    TotalEnemy: 110
+    TimeToComplete: 300
+  - LevelName: 10
+    TotalEnemy: 120
+    TimeToComplete: 300
+  - LevelName: 11
+    TotalEnemy: 130
+    TimeToComplete: 300
+  - LevelName: 12
+    TotalEnemy: 140
+    TimeToComplete: 300
+  - LevelName: 13
+    TotalEnemy: 150
+    TimeToComplete: 300
+  - LevelName: 14
+    TotalEnemy: 160
+    TimeToComplete: 300
+  - LevelName: 15
+    TotalEnemy: 170
+    TimeToComplete: 300
+  - LevelName: 16
+    TotalEnemy: 180
+    TimeToComplete: 300
+  - LevelName: 17
+    TotalEnemy: 190
+    TimeToComplete: 300
+  - LevelName: 18
+    TotalEnemy: 200
+    TimeToComplete: 300

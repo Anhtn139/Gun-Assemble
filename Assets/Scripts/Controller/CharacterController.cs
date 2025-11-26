@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using MoreMountains.TopDownEngine;
 using System.Collections;
+using MoreMountains.Tools;
 
 public class CharacterController : MonoBehaviour
 {
@@ -62,6 +63,8 @@ public class CharacterController : MonoBehaviour
             // reset bộ đếm pickup sau khi áp dụng upgrade
             _pickupCount = 0;
         }
+        WeaponType type = (WeaponType)_upgradeAppliedCount;
+        Signals.Get<ChangeWeaponSignal>().Dispatch(type, _enabledSecondaries);
     }
 
     /// <summary>
