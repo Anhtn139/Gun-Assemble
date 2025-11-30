@@ -5067,6 +5067,7 @@ MonoBehaviour:
   HitAnythingEvent:
     m_PersistentCalls:
       m_Calls: []
+  PrintHitNames: 1
 --- !u!65 &65720217773407688
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -10122,6 +10123,9 @@ MonoBehaviour:
     OnPause:
       m_PersistentCalls:
         m_Calls: []
+    OnStop:
+      m_PersistentCalls:
+        m_Calls: []
     OnResume:
       m_PersistentCalls:
         m_Calls: []
@@ -10447,6 +10451,7 @@ MonoBehaviour:
         DebugActive: 0
         TargetGameObject: {fileID: 1018883284677772756}
         ExtraTargetGameObjects: []
+        IgnorePlayDirection: 0
         SetStateOnInit: 1
         StateOnInit: 0
         SetStateOnPlay: 1
@@ -10566,6 +10571,9 @@ MonoBehaviour:
       m_PersistentCalls:
         m_Calls: []
     OnPause:
+      m_PersistentCalls:
+        m_Calls: []
+    OnStop:
       m_PersistentCalls:
         m_Calls: []
     OnResume:
@@ -10894,6 +10902,7 @@ MonoBehaviour:
         DebugActive: 0
         TargetGameObject: {fileID: 1018883284677772756}
         ExtraTargetGameObjects: []
+        IgnorePlayDirection: 0
         SetStateOnInit: 1
         StateOnInit: 0
         SetStateOnPlay: 1
