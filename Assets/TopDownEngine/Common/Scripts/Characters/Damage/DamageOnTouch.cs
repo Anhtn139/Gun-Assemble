@@ -813,7 +813,33 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void OnAnyCollision(GameObject other)
 		{
-		}
+            // if this DamageOnTouch belongs to a Projectile, trigger its area damage immediately
+            var projectile = this.gameObject.MMGetComponentNoAlloc<Projectile>();
+            if (projectile != null && projectile.ExplodeOnDeath)
+            {
+                // determine instigator (weapon owner if available)
+                GameObject instigator = (projectile.SourceWeapon != null && projectile.SourceWeapon.Owner != null)
+                    ? projectile.SourceWeapon.Owner.gameObject
+                    : projectile.gameObject;
+
+                // apply area damage at projectile position (handles 2D and 3D inside Projectile.ApplyAreaDamage)
+                projectile.ApplyAreaDamage(projectile.transform.position,
+                                           projectile.ExplosionRadius,
+                                           projectile.ExplosionMinDamage,
+                                           projectile.ExplosionMaxDamage,
+                                           projectile.ExplosionLayerMask,
+                                           instigator);
+
+                // stop / deactivate the projectile to avoid further movement/damage
+                projectile.StopAt();
+
+                // optionally deactivate the projectile gameobject so it doesn't keep running
+                projectile.gameObject.SetActive(false);
+
+                // make sure this damage zone won't double-apply (if using separate damage areas)
+                this.gameObject.SetActive(false);
+            }
+        }
 
 		/// <summary>
 		/// Applies damage to itself

@@ -6,6 +6,8 @@ using MoreMountains.Feedbacks;
 
 namespace MoreMountains.TopDownEngine
 {
+	public class KillEnemySignal : ASignal{}
+	
 	/// <summary>
 	/// An event triggered every time health values change, for other classes to listen to
 	/// </summary>
@@ -811,7 +813,10 @@ namespace MoreMountains.TopDownEngine
 			DamageDisabled();
 
 			DeathMMFeedbacks?.PlayFeedbacks(this.transform.position);
-            
+			if (_character != null)
+			{
+				Signals.Get<KillEnemySignal>().Dispatch();
+			}
 			// Adds points if needed.
 			if(PointsWhenDestroyed != 0)
 			{

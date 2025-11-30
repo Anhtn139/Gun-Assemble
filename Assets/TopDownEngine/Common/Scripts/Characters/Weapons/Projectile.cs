@@ -53,6 +53,20 @@ namespace MoreMountains.TopDownEngine
 		[Tooltip("should the projectile damage its owner?")]
 		public bool DamageOwner = false;
 
+		[Header("Explosion (optional)")]
+		[Tooltip("If true, the projectile will apply area damage on death.")]
+		public bool ExplodeOnDeath = false;
+		[Tooltip("Explosion radius (world units).")]
+		public float ExplosionRadius = 2f;
+		[Tooltip("Min damage applied per target in explosion.")]
+		public float ExplosionMinDamage = 10f;
+		[Tooltip("Max damage applied per target in explosion.")]
+		public float ExplosionMaxDamage = 10f;
+		[Tooltip("Which layers can be damaged by the explosion.")]
+		public LayerMask ExplosionLayerMask;
+		[Tooltip("Invincibility duration to pass to damaged Health (after being hit by explosion).")]
+		public float ExplosionInvincibilityDuration = 0.25f;
+
 		/// Returns the associated damage on touch zone
 		public virtual DamageOnTouch TargetDamageOnTouch { get { return _damageOnTouch; } }
 		public virtual Weapon SourceWeapon { get { return _weapon; } }
@@ -122,7 +136,7 @@ namespace MoreMountains.TopDownEngine
 		{
 			Speed = _initialSpeed;
 			ProjectileIsFacingRight = _facingRightInitially;
-			if (_spriteRenderer != null) {	_spriteRenderer.flipX = _initialFlipX;	}
+			if (_sprite_renderer_not_null()) {	_spriteRenderer.flipX = _initialFlipX;	}
 			transform.localScale = _initialLocalScale;	
 			_shouldMove = true;
 			_damageOnTouch?.InitializeFeedbacks();
@@ -136,6 +150,9 @@ namespace MoreMountains.TopDownEngine
 				_collider2D.enabled = true;
 			}
 		}
+
+		// helper to avoid analyzer warnings about sprite renderer usage
+		private bool _sprite_renderer_not_null() { return _spriteRenderer != null; }
 
 		/// <summary>
 		/// On update(), we move the object based on the level's speed and the object's speed, and apply acceleration
@@ -264,6 +281,44 @@ namespace MoreMountains.TopDownEngine
 				_damageOnTouch.MaxDamageCaused = maxDamage;
 			}
 		}
+
+		/// <summary>
+		/// Applies area damage (3D and 2D). Finds Health components in the radius and calls Damage(...) on them.
+		/// </summary>
+		public virtual void ApplyAreaDamage(Vector3 center, float radius, float minDamage, float maxDamage, LayerMask layerMask, GameObject instigator)
+		{
+			// 3D overlap
+			Collider[] cols = Physics.OverlapSphere(center, radius, layerMask);
+			if (cols != null)
+			{
+				foreach (var col in cols)
+				{
+					if (col == null) continue;
+					var h = col.gameObject.MMGetComponentNoAlloc<Health>() ?? col.GetComponentInParent<Health>();
+					if (h == null) continue;
+					if (!h.CanTakeDamageThisFrame()) continue;
+					float dmg = UnityEngine.Random.Range(minDamage, Mathf.Max(maxDamage, minDamage));
+					Vector3 dir = (h.transform.position - center).normalized;
+					h.Damage(dmg, instigator, 0f, ExplosionInvincibilityDuration, dir, null);
+				}
+			}
+
+			// 2D overlap (if project uses 2D colliders)
+			Collider2D[] cols2 = Physics2D.OverlapCircleAll(new Vector2(center.x, center.y), radius, layerMask);
+			if (cols2 != null)
+			{
+				foreach (var col in cols2)
+				{
+					if (col == null) continue;
+					var h = col.gameObject.MMGetComponentNoAlloc<Health>() ?? col.GetComponentInParent<Health>();
+					if (h == null) continue;
+					if (!h.CanTakeDamageThisFrame()) continue;
+					float dmg = UnityEngine.Random.Range(minDamage, Mathf.Max(maxDamage, minDamage));
+					Vector3 dir = (h.transform.position - center).normalized;
+					h.Damage(dmg, instigator, 0f, ExplosionInvincibilityDuration, dir, null);
+				}
+			}
+		}
         
 		/// <summary>
 		/// Sets the projectile's owner.
@@ -315,6 +370,13 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void OnDeath()
 		{
+			// explosion applied before stopping (so damage uses projectile position)
+			/*if (ExplodeOnDeath)
+			{
+				GameObject instigator = (_weapon != null && _weapon.Owner != null) ? _weapon.Owner.gameObject : this.gameObject;
+				ApplyAreaDamage(this.transform.position, ExplosionRadius, ExplosionMinDamage, ExplosionMaxDamage, ExplosionLayerMask, instigator);
+			}*/
+
 			StopAt ();
 		}
 

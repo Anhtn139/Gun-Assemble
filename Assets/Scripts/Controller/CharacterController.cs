@@ -230,8 +230,8 @@ public class CharacterController : MonoBehaviour
 
         // xử lý pickup
         EnableNextSecondary();
-
+        pickup.GetComponent<Collider>().enabled = false;
         // destroy pickup object (nếu muốn giữ khác, chỉnh ở đây)
-        Destroy(pickup);
+        /*Destroy(pickup);*/
     }
 }

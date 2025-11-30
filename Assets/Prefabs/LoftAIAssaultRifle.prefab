@@ -219,7 +219,6 @@ GameObject:
   - component: {fileID: 114277323309942634}
   - component: {fileID: 95051391410759500}
   - component: {fileID: 114426053428167632}
-  - component: {fileID: 114599354629761864}
   - component: {fileID: 114591608567984394}
   - component: {fileID: 3067009530838456132}
   - component: {fileID: -7124906853457978936}
@@ -372,7 +371,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0514d297deadac74fb15a7b7326ff0d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AimControl: 4
+  AimControl: 3
   AimControlActive: 1
   RotationMode: 0
   WeaponRotationSpeed: 10
@@ -401,29 +400,6 @@ MonoBehaviour:
     m_Bits: 0
   MaximumSlopeElevation: 50
   AvoidNullAim: 1
---- !u!114 &114599354629761864
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1421979490917578}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03aaf62627f364a7d92d307729fe738d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Mode: 1
-  PerformRaycast: 1
-  DrawLaser: 1
-  RaycastOriginOffset: {x: 0, y: 0, z: 0}
-  LaserOriginOffset: {x: 0, y: 0.16, z: 0.57}
-  LaserMaxDistance: 50
-  LaserCollisionMask:
-    serializedVersion: 2
-    m_Bits: 1057536
-  LaserWidth: {x: 0.01, y: 0.01}
-  LaserMaterial: {fileID: 2100000, guid: 41fcf89824cad6c40a3efec451bb197f, type: 2}
 --- !u!114 &114591608567984394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -439,7 +415,7 @@ MonoBehaviour:
   MutualizeWaitingPools: 1
   NestWaitingPool: 1
   NestUnderThis: 0
-  GameObjectToPool: {fileID: 1854097648223014, guid: a2b53980a4b988642b17482ecde04dac,
+  GameObjectToPool: {fileID: 1854097648223014, guid: 550a3becc5340d4408f1960615a53972,
     type: 3}
   PoolSize: 20
   PoolCanExpand: 1
@@ -597,7 +573,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4431693528240422
 Transform:
   m_ObjectHideFlags: 0
@@ -5896,7 +5872,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: d4cd643376433c14a89d978020e035ec, type: 2}
-  - {fileID: 2100000, guid: d4cd643376433c14a89d978020e035ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10751,7 +10726,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: d4cd643376433c14a89d978020e035ec, type: 2}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10962,7 +10936,7 @@ MonoBehaviour:
     - rid: 0
       type: {class: MMF_Particles, ns: MoreMountains.Feedbacks, asm: MoreMountains.Tools}
       data:
-        Active: 1
+        Active: 0
         UniqueID: -876497107
         Label: Particles
         OriginalLabel: Particles Play
@@ -16805,7 +16779,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 32aa65b46c56ea149951a49cec5a1ee4, type: 2}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -21708,7 +21681,6 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d4cd643376433c14a89d978020e035ec, type: 2}
   - {fileID: 2100000, guid: d4cd643376433c14a89d978020e035ec, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -26741,7 +26713,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8774834046424488295
 Transform:
   m_ObjectHideFlags: 0
@@ -31589,7 +31561,6 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
   - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0

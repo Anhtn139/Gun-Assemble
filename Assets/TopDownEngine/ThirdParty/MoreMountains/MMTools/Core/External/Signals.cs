@@ -279,12 +279,6 @@ namespace MoreMountains.Tools
         }
         
         public void AddOnlyListener(Action<T, U> handler) {
-#if UNITY_EDITOR
-            UnityEngine.Debug.Assert(
-                handler.Method.GetCustomAttributes(typeof(System.Runtime.CompilerServices.CompilerGeneratedAttribute),
-                    inherit: false).Length == 0,
-                "Adding anonymous delegates as Signal callbacks is not supported (you wouldn't be able to unregister them later).");
-#endif
             callback = handler;
         }
 

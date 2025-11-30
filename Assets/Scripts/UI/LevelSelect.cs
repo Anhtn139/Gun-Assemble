@@ -12,6 +12,7 @@ namespace MoreMountains.TopDownEngine
         public void SetLevel()
         {
             LevelController.Instance.CurrentLevelCondition = levelInfo;
+            LevelController.Instance.CurrentLevel = levelInfo.LevelName;
             LevelController.Instance.LoadLevel("GamePlay");
         }
     }

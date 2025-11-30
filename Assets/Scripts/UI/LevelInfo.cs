@@ -54,7 +54,7 @@ public class LevelInfo : ScriptableObject
             levels[i] ??= new LevelCondition();
             levels[i].LevelName = i + 1;
             levels[i].TimeToComplete = 300f;
-            levels[i].TotalEnemy = 30 + i * 10;
+            /*levels[i].TotalEnemy = 30 + i * 10;*/
         }
     }
 }

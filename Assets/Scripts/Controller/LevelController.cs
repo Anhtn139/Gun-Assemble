@@ -8,11 +8,11 @@ public class LoadSignal : ASignal {}
 
 public enum WeaponType
 {
-    Pistol = 0,
-    Shotgun = 1,
-    AR = 2,
-    Sniper = 3,
-    Rocket = 4
+    Arrow = 0,
+    Multi_Arrow = 1,
+    Rapid_Arrow = 2,
+    High_Speed_Arrow = 3,
+    Explode_Arrow = 4
 }
 public class LevelController : MMPersistentSingleton<LevelController>
 {
@@ -25,36 +25,15 @@ public class LevelController : MMPersistentSingleton<LevelController>
     
     public void NextLevel()
     {
-        CurrentLevel = CurrentLevelCondition.LevelName;
         var nextLevel = CurrentLevel + 1;
+        CurrentLevel = nextLevel;
         if (PlayerPrefs.GetInt("CurrentLevel") < nextLevel)
         {
-            PlayerPrefs.SetInt("CurrentLevel", CurrentLevel);
+            PlayerPrefs.SetInt("CurrentLevel", nextLevel);
         }
-        CurrentLevelCondition = levels.Get(nextLevel);
+        CurrentLevelCondition = levels.Get(nextLevel - 1);
         ReloadCurrentScene();
     }
-        
-    /*private void Start()
-    {
-        _countdown = GameController.GameInstance.levelInfo.TimeToComplete;
-        StartCoroutine(StartCount());
-    }
-
-    IEnumerator StartCount()
-    {
-        while (_countdown > 0f)
-        {
-            _countdown -= Time.deltaTime;
-            countdownText.text = "Time: " + _countdown.ToString("0") + "s";
-            yield return null;
-        }
-        if (_countdown <= 0f)
-        {
-            gameOver.SetActive(true);
-            Signals.Get<HideSettingSignal>().Dispatch(true);
-        }
-    }*/
 
     private void Start()
     {
@@ -62,6 +41,14 @@ public class LevelController : MMPersistentSingleton<LevelController>
         {
             loadingScreen.gameObject.SetActive(b);
         });
+    }
+
+    protected override void Awake()
+    {
+        if (!PlayerPrefs.HasKey("CurrentLevel"))
+        {
+            PlayerPrefs.SetInt("CurrentLevel", 1);
+        }
     }
 
     public void MainMenu()
@@ -80,6 +67,7 @@ public class LevelController : MMPersistentSingleton<LevelController>
 
     public void LoadLevel(string levelName)
     {
+        Signals.Get<StartGameSignal>().Dispatch();
         if (coroutine != null) return;
         coroutine = StartCoroutine(LoadMySceneAsync(levelName));
     }

@@ -209,19 +209,16 @@ namespace MoreMountains.TopDownEngine
 				{
 					if (Owner.CharacterDimension == Character.CharacterDimensions.Type3D) // if we're in 3D
 					{
+						// movement direction gets the spread, visual rotation uses weapon's rotation (unchanged)
 						projectile.SetDirection(spread * transform.forward, transform.rotation, true);
 					}
 					else // if we're in 2D
 					{
+						// apply spread to the movement direction but keep projectile initial rotation equal to weapon rotation
 						Vector3 newDirection = (spread * transform.right) * (Flipped ? -1 : 1);
-						if (Owner.Orientation2D != null)
-						{
-							projectile.SetDirection(newDirection, spread * transform.rotation, Owner.Orientation2D.IsFacingRight);
-						}
-						else
-						{
-							projectile.SetDirection(newDirection, spread * transform.rotation, true);
-						}
+						Quaternion visualRotation = transform.rotation;
+						bool facingRight = (Owner.Orientation2D != null) ? Owner.Orientation2D.IsFacingRight : true;
+						projectile.SetDirection(newDirection, visualRotation, facingRight);
 					}
 				}                
 

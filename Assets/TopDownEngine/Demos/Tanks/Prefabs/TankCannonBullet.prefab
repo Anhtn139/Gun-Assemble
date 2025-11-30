@@ -5003,6 +5003,14 @@ MonoBehaviour:
   ProjectileIsFacingRight: 1
   InitialInvulnerabilityDuration: 0
   DamageOwner: 0
+  ExplodeOnDeath: 0
+  ExplosionRadius: 2
+  ExplosionMinDamage: 10
+  ExplosionMaxDamage: 10
+  ExplosionLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  ExplosionInvincibilityDuration: 0.25
 --- !u!114 &114102311241470466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5097,6 +5105,7 @@ MonoBehaviour:
   HitAnythingEvent:
     m_PersistentCalls:
       m_Calls: []
+  PrintHitNames: 0
 --- !u!65 &65720217773407688
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5377,6 +5386,9 @@ MonoBehaviour:
     OnPause:
       m_PersistentCalls:
         m_Calls: []
+    OnStop:
+      m_PersistentCalls:
+        m_Calls: []
     OnResume:
       m_PersistentCalls:
         m_Calls: []
@@ -5424,7 +5436,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 708073995
         Label: Sound
-        OriginalLabel: 
+        OriginalLabel: Sound
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -5549,7 +5561,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 1427144394
         Label: Particles Instantiation
-        OriginalLabel: 
+        OriginalLabel: Particles Instantiation
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -5625,9 +5637,13 @@ MonoBehaviour:
         ParticlesPrefab: {fileID: 5686137831410585204, guid: caa026849e9b13949b4e516dc4926394,
           type: 3}
         RandomParticlePrefabs: []
+        MainParticlesPrefabWeight: 1
+        RandomParticleWeights: 
         ForceSetActiveOnPlay: 0
         StopOnReset: 0
         DeclaredDuration: 0
+        ForceStopAction: 0
+        StopAction: 0
         PositionMode: 0
         InstantiateParticlesPosition: {fileID: 0}
         TargetWorldPosition: {x: 0, y: 0, z: 0}
@@ -5644,7 +5660,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 1632058581
         Label: Lens Distortion
-        OriginalLabel: 
+        OriginalLabel: Lens Distortion
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -5821,7 +5837,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 1527367715
         Label: Cinemachine Impulse
-        OriginalLabel: 
+        OriginalLabel: Cinemachine Impulse
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -5939,7 +5955,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 26344829
         Label: Chromatic Aberration
-        OriginalLabel: 
+        OriginalLabel: Chromatic Aberration
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -6053,7 +6069,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 836265275
         Label: Bloom
-        OriginalLabel: 
+        OriginalLabel: Bloom
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}

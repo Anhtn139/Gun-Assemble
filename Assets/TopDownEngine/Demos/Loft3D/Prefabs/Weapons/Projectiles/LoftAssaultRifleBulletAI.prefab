@@ -5005,6 +5005,14 @@ MonoBehaviour:
   ProjectileIsFacingRight: 1
   InitialInvulnerabilityDuration: 0
   DamageOwner: 0
+  ExplodeOnDeath: 0
+  ExplosionRadius: 2
+  ExplosionMinDamage: 10
+  ExplosionMaxDamage: 10
+  ExplosionLayerMask:
+    serializedVersion: 2
+    m_Bits: 0
+  ExplosionInvincibilityDuration: 0.25
 --- !u!114 &114102311241470466
 MonoBehaviour:
   m_ObjectHideFlags: 0

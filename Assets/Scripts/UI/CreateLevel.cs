@@ -56,7 +56,7 @@ namespace MoreMountains.TopDownEngine
                 go.name = $"Level_{i + 1}_{SanitizeName(info?.LevelName.ToString())}";
                 PopulateLevel(go.gameObject, info);
                 go.levelInfo = info;
-                if (i <= LevelController.Instance.CurrentLevel - 1)
+                if (i <= PlayerPrefs.GetInt("CurrentLevel") - 1)
                 {
                     go.lockIcon.SetActive(false);
                     go.GetComponent<Button>().interactable = true;
