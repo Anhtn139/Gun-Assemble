@@ -5274,7 +5274,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cefb2661e65fc8c4c9c9e8319d6e9912, type: 2}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10290,7 +10289,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cefb2661e65fc8c4c9c9e8319d6e9912, type: 2}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10675,7 +10673,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AbilityStartSfx: {fileID: 0}
-  AbilityInProgressSfx: {fileID: 8300000, guid: f489554675a4a0241a8ef8938c1d6067,
+  AbilityInProgressSfx: {fileID: 8300000, guid: 7ad7eca6ad51ce049814408ca9ecdded,
     type: 3}
   AbilityStopSfx: {fileID: 0}
   AbilityStartFeedbacks: {fileID: 0}
@@ -21410,7 +21408,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: -1058458761
         Label: Particles Play
-        OriginalLabel: 
+        OriginalLabel: Particles Play
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -21496,7 +21494,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: -1929796972
         Label: Sound
-        OriginalLabel: 
+        OriginalLabel: Sound
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -22683,11 +22681,8 @@ MonoBehaviour:
           ButtonText: Automatic Shaker Setup
         Owner: {fileID: 956573894401959423}
         DebugActive: 0
-        Sfx: {fileID: 0}
-        RandomSfx:
-        - {fileID: 8300000, guid: ccec37d734aad9b49a1a39a8a7262bbd, type: 3}
-        - {fileID: 8300000, guid: 4e4e706c4c03d554fbf42a015cc10055, type: 3}
-        - {fileID: 8300000, guid: 497123663b0cc014c96d9984ce147c73, type: 3}
+        Sfx: {fileID: 8300000, guid: 72539a8ff5cba204da6b1222f6d6a417, type: 3}
+        RandomSfx: []
         TestPlayButton:
           ButtonText: Debug Play Sound
         TestStopButton:
@@ -29336,7 +29331,6 @@ ParticleSystemRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 32aa65b46c56ea149951a49cec5a1ee4, type: 2}
-  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -34625,7 +34619,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 1711463569
         Label: Timescale Modifier
-        OriginalLabel: 
+        OriginalLabel: Timescale Modifier
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -34771,7 +34765,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 1221870751
         Label: Color Grading
-        OriginalLabel: 
+        OriginalLabel: Color Grading
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -35020,7 +35014,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 614904587
         Label: Sound
-        OriginalLabel: 
+        OriginalLabel: Sound
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -35088,7 +35082,7 @@ MonoBehaviour:
           ButtonText: Automatic Shaker Setup
         Owner: {fileID: 1884143546621256593}
         DebugActive: 0
-        Sfx: {fileID: 8300000, guid: 6872e40aedb5c1246986a4cfe88a2f67, type: 3}
+        Sfx: {fileID: 8300000, guid: 5c486b44a76f5e641995cc6ea5432388, type: 3}
         RandomSfx: []
         TestPlayButton:
           ButtonText: Debug Play Sound
@@ -68719,7 +68713,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: 959947201
         Label: Particles Play
-        OriginalLabel: 
+        OriginalLabel: Particles Play
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -68805,7 +68799,7 @@ MonoBehaviour:
         Active: 1
         UniqueID: -1563155795
         Label: Sound
-        OriginalLabel: 
+        OriginalLabel: Sound
         ChannelMode: 0
         Channel: 0
         MMChannelDefinition: {fileID: 0}
@@ -68873,10 +68867,8 @@ MonoBehaviour:
           ButtonText: Automatic Shaker Setup
         Owner: {fileID: 1805879205824050221}
         DebugActive: 0
-        Sfx: {fileID: 0}
-        RandomSfx:
-        - {fileID: 8300000, guid: e01aba66628423e4ab94d0ffa499fa24, type: 3}
-        - {fileID: 8300000, guid: 0187e618b4c87584fa5e21a5c68125d2, type: 3}
+        Sfx: {fileID: 8300000, guid: 7ad7eca6ad51ce049814408ca9ecdded, type: 3}
+        RandomSfx: []
         TestPlayButton:
           ButtonText: Debug Play Sound
         TestStopButton:
@@ -68885,11 +68877,12 @@ MonoBehaviour:
         PoolSize: 10
         UseLegacyEventsMode: 0
         StopSoundOnFeedbackStop: 1
-        MinVolume: 0.01
-        MaxVolume: 0.02
+        MinVolume: 1
+        MaxVolume: 1
         MinPitch: 1
         MaxPitch: 1
-        SfxAudioMixerGroup: {fileID: 0}
+        SfxAudioMixerGroup: {fileID: -3165942800488051908, guid: 7e984f512e89b60468e829489e8883e3,
+          type: 2}
         Priority: 128
         PanStereo: 0
         SpatialBlend: 0
