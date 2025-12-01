@@ -42729,6 +42729,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 224970969461592910}
+  - component: {fileID: 224970969461592911}
   m_Layer: 0
   m_Name: HUD
   m_TagString: Untagged
@@ -45731,7 +45732,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 294.51, y: 298.5}
+  m_AnchoredPosition: {x: 356, y: 298.5}
   m_SizeDelta: {x: 445, y: 445}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224720081528886182
@@ -45786,7 +45787,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1651304013}
-  m_Father: {fileID: 224931851980902762}
+  m_Father: {fileID: 224970969461592910}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
@@ -45867,7 +45868,6 @@ RectTransform:
   - {fileID: 224384621992313680}
   - {fileID: 224697546749874762}
   - {fileID: 224429693037124934}
-  - {fileID: 224755030860864890}
   - {fileID: 224985362842861874}
   - {fileID: 2002931094}
   - {fileID: 2414374511120898920}
@@ -45897,6 +45897,7 @@ RectTransform:
   m_Children:
   - {fileID: 1064931253}
   - {fileID: 1005429025}
+  - {fileID: 224755030860864890}
   m_Father: {fileID: 224931851980902762}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -45904,6 +45905,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &224970969461592911
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1663801569796944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c97afc556caea1c44969477eb7ddec74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ConformX: 1
+  ConformY: 1
+  Logging: 0
 --- !u!224 &224983920990179452
 RectTransform:
   m_ObjectHideFlags: 0
