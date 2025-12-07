@@ -1,0 +1,10 @@
+# ninja log v5
+48	7210	7868016367086730	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	c72420a8b1f2406f
+37	7668	7868016371828536	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	c0df82f09acc6e10
+80	7906	7868016373751376	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	6e0d4151d5b2df1
+65	8116	7868016376659284	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	b37490660e5715e3
+72	8419	7868016380146530	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	3d444245ae5812ec
+2	8637	7868016382325006	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	fcdf003ee5924e82
+56	8998	7868016386144561	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	ffb8eb4e984cb746
+29	9480	7868016390904191	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	5b0ddb5cba46d219
+9480	9804	7868016393308823	D:/UnityProject/SkeletonSurvival/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/v012c6n4/obj/arm64-v8a/libgame.so	5a5f24c638a179bb

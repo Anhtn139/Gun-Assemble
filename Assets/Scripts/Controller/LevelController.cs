@@ -21,6 +21,7 @@ public class LevelController : MMPersistentSingleton<LevelController>
     public LevelInfo.LevelCondition CurrentLevelCondition;
     public int CurrentLevel = 1;
     public WeaponType CurrentWeapon;
+    public int skinID;
     private Coroutine coroutine;
     
     public void NextLevel()

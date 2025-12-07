@@ -11,6 +11,10 @@ public class SpawnUpgrade : MonoBehaviour
     [SerializeField] private float minSpacing = 1f; // khoảng cách tối thiểu giữa các prefab
     [SerializeField] private int maxAttemptsPerSpawn = 20; // số lần thử vị trí cho mỗi prefab
 
+    [Header("Spawn collision check")]
+    [SerializeField] private float spawnCheckRadius = 0.5f; // bán kính kiểm tra va chạm khi spawn
+    [SerializeField] private LayerMask spawnCollisionMask = ~0; // lớp để kiểm tra va chạm (mặc định: mọi lớp)
+
     [Header("Batching")]
     [SerializeField] private int batchSize = 1; // số prefab spawn mỗi đợt
     [SerializeField] private float batchInterval = 1f; // thời gian (s) giữa các đợt
@@ -83,6 +87,7 @@ public class SpawnUpgrade : MonoBehaviour
                     attemptedAny = true;
                     lastCandidate = candidate;
 
+                    // spacing check với các vị trí đã spawn
                     bool tooClose = false;
                     for (int j = 0; j < spawnedPositions.Count; j++)
                     {
@@ -93,12 +98,21 @@ public class SpawnUpgrade : MonoBehaviour
                         }
                     }
 
-                    if (!tooClose)
+                    if (tooClose)
+                        continue;
+
+                    // kiểm tra va chạm vật lý tại vị trí candidate
+                    Collider[] hits = Physics.OverlapSphere(candidate, spawnCheckRadius, spawnCollisionMask.value);
+                    if (hits != null && hits.Length > 0)
                     {
-                        chosenPos = candidate;
-                        found = true;
-                        break;
+                        // có va chạm => không hợp lệ
+                        continue;
                     }
+
+                    // nếu không quá gần và không va chạm thì chấp nhận
+                    chosenPos = candidate;
+                    found = true;
+                    break;
                 }
 
                 if (!found)
@@ -114,7 +128,37 @@ public class SpawnUpgrade : MonoBehaviour
                         chosenPos = new Vector3(zoneCenter.x, zoneCenter.y, zoneCenter.z);
                     }
 
-                    Debug.LogWarning($"Không tìm được vị trí hợp lệ sau {maxAttemptsPerSpawn} lần thử. Vẫn spawn tại {chosenPos}.");
+                    // thực hiện kiểm tra va chạm cuối cùng và thử dịch nhẹ vị trí nếu vẫn collision
+                    bool colliding = Physics.OverlapSphere(chosenPos, spawnCheckRadius, spawnCollisionMask.value).Length > 0;
+                    if (colliding)
+                    {
+                        bool resolved = false;
+                        // cố gắng nudge một vài lần trong vùng spawn
+                        for (int n = 0; n < 5; n++)
+                        {
+                            Vector3 nudge = Random.insideUnitSphere * spawnCheckRadius * 1.5f;
+                            nudge.y = 0f; // giữ y cố định
+                            Vector3 nudged = chosenPos + nudge;
+                            if (spawnZone.bounds.Contains(nudged))
+                            {
+                                if (Physics.OverlapSphere(nudged, spawnCheckRadius, spawnCollisionMask.value).Length == 0)
+                                {
+                                    chosenPos = nudged;
+                                    resolved = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!resolved)
+                        {
+                            Debug.LogWarning($"Không tìm được vị trí không va chạm sau {maxAttemptsPerSpawn} lần thử. Vẫn spawn tại {chosenPos} (có thể chồng lấp).");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Không tìm được vị trí tối ưu sau {maxAttemptsPerSpawn} lần thử. Spawn tại {chosenPos}.");
+                    }
                 }
 
                 Instantiate(upgradePrefab, chosenPos, Quaternion.identity);

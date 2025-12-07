@@ -1,13 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using MoreMountains.TopDownEngine;
 using System.Collections;
 using MoreMountains.Tools;
 
+[Serializable]
+public class SkinData
+{
+    public int skinID;
+    public GameObject[] skinPrefabs;
+}
 public class CharacterController : MonoBehaviour
 {
     [Header("Secondaries")]
     [Tooltip("Gán 2 character phụ (GameObject). Mặc định để inactive trong prefab)")]
     [SerializeField] private GameObject[] SecondaryCharacters = new GameObject[2];
+    [SerializeField] private SkinData[] SkinDatas;
 
     [Header("Upgrade / Weapon")]
     [Tooltip("Danh sách vũ khí sẽ đổi khi đủ số lượng pickups (gán prefab Weapon từ TopDown Engine)")]
@@ -199,6 +207,24 @@ public class CharacterController : MonoBehaviour
         foreach (var s in SecondaryCharacters)
         {
             if (s != null) s.SetActive(false);
+        }
+
+        foreach (var s in SkinDatas)
+        {
+            if (s.skinID == LevelController.Instance.skinID)
+            {
+                foreach (var p in s.skinPrefabs)
+                {
+                    p.SetActive(true);
+                }
+            }
+            else
+            {
+                foreach (var p in s.skinPrefabs)
+                {
+                    p.SetActive(false);
+                }
+            }
         }
     }
 

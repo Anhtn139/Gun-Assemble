@@ -59,7 +59,7 @@ namespace MoreMountains.TopDownEngine
                 if (i <= PlayerPrefs.GetInt("CurrentLevel") - 1)
                 {
                     go.lockIcon.SetActive(false);
-                    go.GetComponent<Button>().interactable = true;
+                    /*go.GetComponent<Button>().interactable = true;*/
                 }
             }
         }

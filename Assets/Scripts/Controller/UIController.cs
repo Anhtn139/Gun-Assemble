@@ -23,6 +23,8 @@ public class UIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private TextMeshProUGUI enemyText;
     [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private Image[] imagesSkin;
+    [SerializeField] private Sprite[] spritesSkin;
     private int totalEnemy;
     private float totalTime;
 
@@ -57,7 +59,7 @@ public class UIController : MonoBehaviour
             
         });
     }
-
+    
     public void ReloadScene()
     {
         LevelController.Instance.ReloadCurrentScene();
@@ -69,6 +71,7 @@ public class UIController : MonoBehaviour
     public void MainMenu()
     {
         LevelController.Instance.MainMenu();
+        Time.timeScale = 1f;
     }
 
     public void NextLevel()
@@ -100,6 +103,11 @@ public class UIController : MonoBehaviour
         // show initial time and start countdown
         UpdateTimeText(totalTime);
         StartCountdown();
+
+        foreach (Image img in imagesSkin)
+        {
+            img.sprite = spritesSkin[LevelController.Instance.skinID];
+        }
     }
 
     /// <summary>
