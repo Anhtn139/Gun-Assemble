@@ -14,6 +14,7 @@ namespace MoreMountains.TopDownEngine
         public GameObject lockIcon;
         [SerializeField] TextMeshPro levelName;
         public bool isLocked = false;
+        [SerializeField] private AudioSource audioSource;
 
         public void SetLevel()
         {
@@ -40,6 +41,7 @@ namespace MoreMountains.TopDownEngine
         {
             if (PlayerPrefs.GetInt("CurrentLevel") < levelInfo.LevelName) return;
             SetLevel();
+            audioSource.Play();
         }
 
         private void Awake()

@@ -29,7 +29,7 @@ public class VFXColliderMovement : MonoBehaviour
         {
             if (!p.isLocked)
             {
-                positions.Add(p.transform.localPosition);
+                positions.Add(p.transform.position);
             }
         }
     }
