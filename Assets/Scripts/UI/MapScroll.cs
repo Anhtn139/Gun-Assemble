@@ -38,6 +38,10 @@ public class MapScroll : MonoBehaviour
     [SerializeField] private float minZoom = 2f;
     [SerializeField] private float maxZoom = 20f;
 
+    [Header("Debug")]
+    [Tooltip("Enable to print highlighted-level and map positions for debugging")]
+    [SerializeField] private bool debugLogPositions = true;
+
     // runtime
     private bool _dragging;
     private Vector3 _lastPointerWorld;
@@ -62,6 +66,9 @@ public class MapScroll : MonoBehaviour
     private Vector3 _spriteInitialCenter = Vector3.zero;
     private bool _hasSpriteOffsets = false;
 
+    // new flag to indicate Start completed
+    private bool _hasStarted = false;
+
     void Awake()
     {
         _cachedCam = cam ? cam : Camera.main;
@@ -84,28 +91,33 @@ public class MapScroll : MonoBehaviour
             _moveTarget = mapSprite.transform;
             SetBoundsFromSprite(mapSprite);
             autoSetBoundsFromCanvas = false;
-            return;
         }
-
-        // fallback: use canvas viewport to compute world bounds
-        if (autoSetBoundsFromCanvas)
+        else
         {
-            if (uiCanvas == null)
+            // fallback: use canvas viewport to compute world bounds
+            if (autoSetBoundsFromCanvas)
             {
-                uiCanvas = FindObjectOfType<Canvas>();
-            }
+                if (uiCanvas == null)
+                {
+                    uiCanvas = FindObjectOfType<Canvas>();
+                }
 
-            if (uiCanvas != null)
-            {
-                SetBoundsFromCanvas(uiCanvas, viewportRect);
-            }
-            else
-            {
-                Debug.LogWarning("MapScroll: autoSetBoundsFromCanvas bật nhưng không tìm thấy Canvas trong scene.");
-            }
+                if (uiCanvas != null)
+                {
+                    SetBoundsFromCanvas(uiCanvas, viewportRect);
+                }
+                else
+                {
+                    Debug.LogWarning("MapScroll: autoSetBoundsFromCanvas bật nhưng không tìm thấy Canvas trong scene.");
+                }
 
-            autoSetBoundsFromCanvas = false;
+                autoSetBoundsFromCanvas = false;
+            }
         }
+
+        // mark Start completed and perform initial scroll-to-highlight when state is fully initialized
+        _hasStarted = true;
+        ScrollToHighlighted();
     }
 
     void Update()
@@ -587,6 +599,228 @@ public class MapScroll : MonoBehaviour
         {
             _hasComputedLocalBounds = false;
         }
+    }
+
+    void OnEnable()
+    {
+        // ensure core references are initialized (OnEnable runs before Start)
+        if (_cachedCam == null)
+            _cachedCam = cam ? cam : Camera.main;
+        if (_content == null)
+            _content = content ? content : transform;
+        if (_moveTarget == null)
+            _moveTarget = _content;
+
+        // If a mapSprite is assigned but Start hasn't run yet, compute its bounds now.
+        if (mapSprite != null && !_hasSpriteOffsets)
+        {
+            _moveTarget = mapSprite.transform;
+            SetBoundsFromSprite(mapSprite);
+        }
+        else if (autoSetBoundsFromCanvas && !_hasComputedLocalBounds)
+        {
+            if (uiCanvas == null)
+                uiCanvas = FindObjectOfType<Canvas>();
+            if (uiCanvas != null)
+                SetBoundsFromCanvas(uiCanvas, viewportRect);
+        }
+
+        // Only scroll-to-highlight if Start finished initialization. This avoids inconsistent
+        // moveTarget state when OnEnable runs before Start.
+        if (_hasStarted)
+        {
+            ScrollToHighlighted();
+        }
+    }
+
+    // Reset move target back to (0,0) when the component is disabled so future enables/centering aren't affected.
+    void OnDisable()
+    {
+        if (_moveTarget == null) return;
+
+        // stop any motion
+        _dragging = false;
+        _velocity = Vector2.zero;
+
+        // reset to (0,0). If moveTarget is parented, reset localPosition so world transforms remain correct.
+        if (_moveTarget.parent != null)
+        {
+            Vector3 local = _moveTarget.localPosition;
+            local.x = 0f;
+            local.y = 0f;
+            _moveTarget.localPosition = local;
+        }
+        else
+        {
+            Vector3 world = _moveTarget.position;
+            world.x = 0f;
+            world.y = 0f;
+            _moveTarget.position = world;
+        }
+
+        if (debugLogPositions)
+        {
+            Debug.Log($"MapScroll: Reset {_moveTarget.name} to (0,0) on disable.");
+        }
+    }
+
+    // Scroll to the LevelSelect that is currently highlighted (PlayerPrefs "CurrentLevel").
+    // Use level's local coordinates relative to _moveTarget when the level is a child of the move target.
+    private void ScrollToHighlighted()
+    {
+        if (!useBounds)
+        {
+            Debug.LogWarning("MapScroll: useBounds is not enabled. Cannot scroll to highlighted level.");
+            return;
+        }
+
+        int currentLevel = PlayerPrefs.GetInt("CurrentLevel");
+        MoreMountains.TopDownEngine.LevelSelect[] all = FindObjectsOfType<MoreMountains.TopDownEngine.LevelSelect>();
+        MoreMountains.TopDownEngine.LevelSelect targetLS = null;
+        foreach (var ls in all)
+        {
+            if (ls == null) continue;
+            var infoField = ls.levelInfo;
+            if (infoField != null && infoField.LevelName == currentLevel)
+            {
+                targetLS = ls;
+                break;
+            }
+        }
+
+        if (targetLS == null) return;
+
+        Transform levelT = targetLS.transform;
+
+        // compute viewport center at the same depth as the level (use level's current world Z)
+        float levelZ = levelT.position.z;
+        RectTransform rt = viewportRect != null ? viewportRect : (uiCanvas != null ? uiCanvas.GetComponent<RectTransform>() : null);
+        Vector3 viewportCenter;
+        if (rt != null)
+        {
+            Vector3[] corners = GetViewportWorldCornersAtDepth(levelZ, rt);
+            viewportCenter = (corners[0] + corners[2]) * 0.5f;
+        }
+        else if (_cachedCam != null)
+        {
+            float screenZ = _cachedCam.WorldToScreenPoint(new Vector3(_moveTarget.position.x, _moveTarget.position.y, levelZ)).z;
+            Vector3 screenCenter = new Vector3(Screen.width * 0.5f, Screen.height * 0.5f, screenZ);
+            viewportCenter = _cachedCam.ScreenToWorldPoint(screenCenter);
+        }
+        else
+        {
+            viewportCenter = levelT.position;
+        }
+
+        // Compute desired moveTarget world position.
+        Vector3 desiredMoveTargetPos;
+
+        // If level is a descendant of _moveTarget, compute using its local coordinates in _moveTarget space
+        if (_moveTarget != null && levelT.IsChildOf(_moveTarget))
+        {
+            // local position of level inside moveTarget's space (stable regardless of moveTarget translation)
+            Vector3 levelLocalInTarget = _moveTarget.InverseTransformPoint(levelT.position);
+
+            // offset from moveTarget.position to level's world position given current rotation/scale:
+            // offset = moveTarget.TransformPoint(levelLocal) - moveTarget.position (rotation+scale applied to local)
+            Vector3 offset = _moveTarget.TransformPoint(levelLocalInTarget) - _moveTarget.position;
+
+            // to center level in viewport we need moveTarget.position such that moveTarget.position + offset == viewportCenter
+            desiredMoveTargetPos = viewportCenter - offset;
+
+            if (debugLogPositions)
+            {
+                Debug.Log($"MapScroll: (child) highlighted='{targetLS.name}', levelLocalInTarget={levelLocalInTarget}, offset={offset}, moveTarget_before={_moveTarget.position}, viewportCenter={viewportCenter}, desiredMoveTargetPos={desiredMoveTargetPos}");
+            }
+        }
+        else
+        {
+            // fallback to world-space logic (level world position)
+            Vector3 levelWorldPos = levelT.position;
+            desiredMoveTargetPos = _moveTarget.position + (viewportCenter - levelWorldPos);
+
+            if (debugLogPositions)
+            {
+                Debug.Log($"MapScroll: (world) highlighted='{targetLS.name}', levelWorldPos={levelWorldPos}, moveTarget_before={_moveTarget.position}, viewportCenter={viewportCenter}, desiredMoveTargetPos={desiredMoveTargetPos}");
+            }
+        }
+
+        // Now clamp desiredMoveTargetPos according to same rules as before.
+
+        // If move target is the sprite itself and sprite-clamp logic applies, clamp using sprite allowed ranges
+        if (mapSprite != null && _moveTarget == mapSprite.transform && _hasSpriteOffsets)
+        {
+            RectTransform viewRt = viewportRect != null ? viewportRect : (uiCanvas != null ? uiCanvas.GetComponent<RectTransform>() : null);
+            if (viewRt == null)
+            {
+                float fallbackX = Mathf.Clamp(desiredMoveTargetPos.x, worldBounds.xMin, worldBounds.xMax);
+                float fallbackY = Mathf.Clamp(desiredMoveTargetPos.y, worldBounds.yMin, worldBounds.yMax);
+                if (debugLogPositions)
+                    Debug.Log($"MapScroll (sprite-fallback): desired={desiredMoveTargetPos}, clamped=({fallbackX},{fallbackY}), worldBounds={worldBounds}");
+                _moveTarget.position = new Vector3(fallbackX, fallbackY, _moveTarget.position.z);
+                return;
+            }
+
+            Vector3[] viewportWorldAtSpriteDepth = GetViewportWorldCornersAtDepth(_spriteInitialCenter.z, viewRt);
+            float vMinX = viewportWorldAtSpriteDepth[0].x;
+            float vMaxX = viewportWorldAtSpriteDepth[2].x;
+            float vMinY = viewportWorldAtSpriteDepth[0].y;
+            float vMaxY = viewportWorldAtSpriteDepth[2].y;
+
+            float allowedPosMinX = vMaxX - _spriteOffsetMax.x;
+            float allowedPosMaxX = vMinX - _spriteOffsetMin.x;
+            float allowedPosMinY = vMaxY - _spriteOffsetMax.y;
+            float allowedPosMaxY = vMinY - _spriteOffsetMin.y;
+
+            if (allowedPosMinX > allowedPosMaxX)
+            {
+                allowedPosMinX = allowedPosMaxX = _spriteInitialCenter.x;
+            }
+            if (allowedPosMinY > allowedPosMaxY)
+            {
+                allowedPosMinY = allowedPosMaxY = _spriteInitialCenter.y;
+            }
+
+            float clampedX = Mathf.Clamp(desiredMoveTargetPos.x, allowedPosMinX, allowedPosMaxX);
+            float clampedY = Mathf.Clamp(desiredMoveTargetPos.y, allowedPosMinY, allowedPosMaxY);
+
+            if (debugLogPositions)
+            {
+                Debug.Log($"MapScroll (sprite): desired={desiredMoveTargetPos}, allowedX=[{allowedPosMinX},{allowedPosMaxX}], allowedY=[{allowedPosMinY},{allowedPosMaxY}], clamped=({clampedX},{clampedY})");
+            }
+
+            _moveTarget.position = new Vector3(clampedX, clampedY, _moveTarget.position.z);
+            return;
+        }
+
+        // If we have precomputed local bounds for a parented target, clamp in parent's local space
+        if (_hasComputedLocalBounds && _moveTarget != null && _moveTarget.parent != null)
+        {
+            Transform parent = _moveTarget.parent;
+            Vector3 desiredLocal = parent.InverseTransformPoint(desiredMoveTargetPos);
+            Vector3 curLocal = _moveTarget.localPosition;
+            float clampedLocalX = Mathf.Clamp(desiredLocal.x, _targetMinLocal.x, _targetMaxLocal.x);
+            float clampedLocalY = Mathf.Clamp(desiredLocal.y, _targetMinLocal.y, _targetMaxLocal.y);
+
+            if (debugLogPositions)
+            {
+                Debug.Log($"MapScroll (local): desiredLocal={desiredLocal}, allowedLocalX=[{_targetMinLocal.x},{_targetMaxLocal.x}], allowedLocalY=[{_targetMinLocal.y},{_targetMaxLocal.y}], clampedLocal=({clampedLocalX},{clampedLocalY})");
+            }
+
+            _moveTarget.localPosition = new Vector3(clampedLocalX, clampedLocalY, curLocal.z);
+            return;
+        }
+
+        // fallback: clamp desired world position into worldBounds and apply
+        float finalX = Mathf.Clamp(desiredMoveTargetPos.x, worldBounds.xMin, worldBounds.xMax);
+        float finalY = Mathf.Clamp(desiredMoveTargetPos.y, worldBounds.yMin, worldBounds.yMax);
+
+        if (debugLogPositions)
+        {
+            Debug.Log($"MapScroll (world): desired={desiredMoveTargetPos}, worldBoundsX=[{worldBounds.xMin},{worldBounds.xMax}], worldBoundsY=[{worldBounds.yMin},{worldBounds.yMax}], final=({finalX},{finalY})");
+        }
+
+        _moveTarget.position = new Vector3(finalX, finalY, _moveTarget.position.z);
     }
 
     // Debug draw
