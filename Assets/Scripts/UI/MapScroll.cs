@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -116,8 +117,8 @@ public class MapScroll : MonoBehaviour
         }
 
         // mark Start completed and perform initial scroll-to-highlight when state is fully initialized
-        _hasStarted = true;
-        ScrollToHighlighted();
+        /*_hasStarted = true;*/
+        /*ScrollToHighlighted();*/
     }
 
     void Update()
@@ -627,10 +628,13 @@ public class MapScroll : MonoBehaviour
 
         // Only scroll-to-highlight if Start finished initialization. This avoids inconsistent
         // moveTarget state when OnEnable runs before Start.
-        if (_hasStarted)
-        {
-            ScrollToHighlighted();
-        }
+        StartCoroutine(LateScrollToHighlighted());
+    }
+
+    IEnumerator LateScrollToHighlighted()
+    {
+        yield return new WaitForSeconds(0.1f);
+        ScrollToHighlighted();
     }
 
     // Reset move target back to (0,0) when the component is disabled so future enables/centering aren't affected.

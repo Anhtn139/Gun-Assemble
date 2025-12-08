@@ -657,7 +657,7 @@ VisualEffect:
       m_Array: []
     m_Vector3f:
       m_Array:
-      - m_Value: {x: 101.725006, y: -9.805, z: 0}
+      - m_Value: {x: 148.72502, y: 11.295001, z: 0}
         m_Name: ColliderPos
         m_Overridden: 1
       - m_Value: {x: 0, y: 0, z: 0}
@@ -5467,7 +5467,7 @@ MonoBehaviour:
   zoomSpeed: 1
   minZoom: 2
   maxZoom: 20
-  debugLogPositions: 1
+  debugLogPositions: 0
 --- !u!1 &1025272924
 GameObject:
   m_ObjectHideFlags: 0
