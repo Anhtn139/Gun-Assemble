@@ -1,10 +1,10 @@
 # ninja log v5
-239	8773	7868315320857696	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	973384716e1ace38
-122	8980	7868315323218856	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	ab3dbb6e5721f7b8
-411	9057	7868315324108658	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	b53fafeb06ecb6b0
-210	9160	7868315325478136	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	cb438e3b25499ce3
-370	9247	7868315326107652	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	ca41f941bc08481d
-2	9433	7868315327957725	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	a8ea5d39390a057c
-147	9951	7868315333252397	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	cd0fa085796740e4
-48	10142	7868315335095919	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	a0925f00ca1ae92
-10142	10445	7868315338064372	D:/UnityProject/SkeletonSurvival/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/501y4q1l/obj/arm64-v8a/libgame.so	5f0c9c5edb50307e
+119	4377	7873251821330395	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	973384716e1ace38
+81	4485	7873251822349884	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	ab3dbb6e5721f7b8
+98	4696	7873251824509345	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	ca41f941bc08481d
+5168	5599	7873251833641394	D:/UnityProject/SkeletonSurvival/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/501y4q1l/obj/arm64-v8a/libgame.so	5f0c9c5edb50307e
+127	4519	7873251822741998	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	b53fafeb06ecb6b0
+71	4794	7873251825502554	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	a8ea5d39390a057c
+90	4604	7873251823614122	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	cb438e3b25499ce3
+108	5006	7873251827723332	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	cd0fa085796740e4
+20	5167	7873251829298528	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	a0925f00ca1ae92
