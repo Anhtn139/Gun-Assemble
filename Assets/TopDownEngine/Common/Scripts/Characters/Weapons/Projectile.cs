@@ -463,55 +463,78 @@ namespace MoreMountains.TopDownEngine
 			// require a Health on the other to consider it a "hit"
 			var hitHealth = other.MMGetComponentNoAlloc<Health>() ?? other.GetComponentInParent<Health>();
 			if (hitHealth == null) { return; }
-			// ensure it can take damage (same check used elsewhere)
+
+			// Try to determine whether the target can be damaged now.
+			// If CanTakeDamageThisFrame() returns false because the target is dead (CurrentHealth <= 0),
+			// we skip chaining. If it's false due to invulnerability/temporary immunity we still allow chaining
+			// because DamageOnTouch may have run before this callback and put the target into invulnerable state.
+			bool canTakeDamage = true;
 			try
 			{
-				if (!hitHealth.CanTakeDamageThisFrame()) { return; }
+				canTakeDamage = hitHealth.CanTakeDamageThisFrame();
 			}
 			catch
 			{
-				// if method not available for some reason, continue
-				// debug logging
 #if UNITY_EDITOR
-				Debug.Log($"Projectile.HandleCollisionWith hit:{other.name} remainingChains:{_remainingChains} pos:{transform.position}", this);
+				Debug.LogWarning($"Projectile.HandleCollisionWith: CanTakeDamageThisFrame threw for {other.name}, assuming damageable.", this);
 #endif
-
-				// if no chaining configured, nothing more to do here
-				if (_remainingChains <= 0)
-				{
-#if UNITY_EDITOR
-					Debug.Log("Projectile: no remaining chains, skipping chain logic.", this);
-#endif
-					return;
-				}
-
-				// attempt to find next target
-				GameObject next = FindClosestValidTarget(transform.position, other);
-				if (next == null)
-				{
-#if UNITY_EDITOR
-					Debug.Log($"Projectile: FindClosestValidTarget returned null. ChainRange:{ChainRange}", this);
-#endif
-					// no target found -> do nothing (no chain)
-					return;
-				}
-
-#if UNITY_EDITOR
-				Debug.Log($"Projectile: chaining from {other.name} to {next.name}", this);
-#endif
-
-				// spawn a new projectile that will continue the chain
-				SpawnChainProjectile(next, other);
-
-				// make current projectile ignore this object after current physics tick so it doesn't re-hit
-				StartCoroutine(DelayIgnoreThenKeep(other));
-
-				// stop current projectile's movement/colliders (visual/behaviour choice)
-				StopAt();
-
-				// decrease remaining chains on this instance (spawned projectile gets its own ChainCount set in SpawnChainProjectile)
-				_remainingChains--;
+				canTakeDamage = true;
 			}
+
+			if (!canTakeDamage)
+			{
+				// If target is actually dead (health <= 0 and InitialHealth != 0), don't chain
+				if (hitHealth.CurrentHealth <= 0 && hitHealth.InitialHealth != 0)
+				{
+#if UNITY_EDITOR
+					Debug.Log($"Projectile: target {other.name} appears dead (CurrentHealth <= 0), skipping chain.", this);
+#endif
+					return;
+				}
+#if UNITY_EDITOR
+				Debug.Log($"Projectile: target {other.name} cannot take damage this frame (invulnerable/immune) but chaining will still be attempted.", this);
+#endif
+			}
+
+#if UNITY_EDITOR
+			Debug.Log($"Projectile.HandleCollisionWith hit:{other.name} remainingChains:{_remainingChains} pos:{transform.position}", this);
+#endif
+
+			// if no chaining configured, nothing more to do here
+			if (_remainingChains <= 0)
+			{
+#if UNITY_EDITOR
+				Debug.Log("Projectile: no remaining chains, skipping chain logic.", this);
+#endif
+				return;
+			}
+
+			// attempt to find next target
+			GameObject next = FindClosestValidTarget(transform.position, other);
+			if (next == null)
+			{
+#if UNITY_EDITOR
+				Debug.Log($"Projectile: FindClosestValidTarget returned null. ChainRange:{ChainRange}", this);
+#endif
+				// no target found -> do nothing (no chain)
+				return;
+			}
+
+#if UNITY_EDITOR
+			Debug.Log($"Projectile: chaining from {other.name} to {next.name}", this);
+#endif
+
+			// spawn a new projectile that will continue the chain
+			SpawnChainProjectile(next, other);
+
+			// make current projectile ignore this object after current physics tick so it doesn't re-hit
+			StartCoroutine(DelayIgnoreThenKeep(other));
+
+			// stop current projectile's movement/colliders (visual/behaviour choice)
+			StopAt();
+
+			// decrease remaining chains on this instance (spawned projectile gets its own ChainCount set in SpawnChainProjectile)
+			_remainingChains--;
 		}
 
 		/// <summary>
