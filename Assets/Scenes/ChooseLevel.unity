@@ -5905,6 +5905,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6342386365369796527, guid: 9939310d4f628614688d140a4cd6c945,
+        type: 3}
+      propertyPath: levelInfo.TotalEnemy
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7551338603098300373, guid: 9939310d4f628614688d140a4cd6c945,
         type: 3}
       propertyPath: m_IsActive

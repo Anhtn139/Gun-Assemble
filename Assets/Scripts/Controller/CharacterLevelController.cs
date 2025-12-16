@@ -55,6 +55,7 @@ public class CharacterLevelController : MonoBehaviour
     // runtime
     private float _progress = 0f;
     private readonly System.Random _rng = new System.Random();
+    [SerializeField] private PowerUp _currentPowerUp;
 
     void Start()
     {

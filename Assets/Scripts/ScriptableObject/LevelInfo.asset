@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levels:
   - LevelName: 1
-    TotalEnemy: 30
+    TotalEnemy: 4
     TimeToComplete: 300
   - LevelName: 2
     TotalEnemy: 40

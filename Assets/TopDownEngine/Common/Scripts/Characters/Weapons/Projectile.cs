@@ -67,6 +67,12 @@ namespace MoreMountains.TopDownEngine
 		[Tooltip("Invincibility duration to pass to damaged Health (after being hit by explosion).")]
 		public float ExplosionInvincibilityDuration = 0.25f;
 
+		[Header("Chaining (optional)")]
+		[Tooltip("Number of times this projectile can chain to another target after hitting one (0 = no chaining).")]
+		public int ChainCount = 0;
+		[Tooltip("Max distance (world units) to search for the next chain target.")]
+		public float ChainRange = 5f;
+
 		/// Returns the associated damage on touch zone
 		public virtual DamageOnTouch TargetDamageOnTouch { get { return _damageOnTouch; } }
 		public virtual Weapon SourceWeapon { get { return _weapon; } }
@@ -88,6 +94,9 @@ namespace MoreMountains.TopDownEngine
 		protected bool _shouldMove = true;
 		protected Health _health;
 		protected bool _spawnerIsFacingRight;
+
+		// chaining runtime
+		protected int _remainingChains = 0;
 
 		/// <summary>
 		/// On awake, we store the initial speed of the object 
@@ -149,6 +158,9 @@ namespace MoreMountains.TopDownEngine
 			{
 				_collider2D.enabled = true;
 			}
+
+			// init chaining
+			_remainingChains = ChainCount;
 		}
 
 		// helper to avoid analyzer warnings about sprite renderer usage
@@ -237,7 +249,7 @@ namespace MoreMountains.TopDownEngine
 		{
 			if (_spriteRenderer != null)
 			{
-				_spriteRenderer.flipX = !_spriteRenderer.flipX;
+				_spriteRenderer.flipX = !_sprite_renderer_not_null() ? _spriteRenderer.flipX : !_spriteRenderer.flipX;
 			}	
 			else
 			{
@@ -250,7 +262,7 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void Flip(bool state)
 		{
-			if (_spriteRenderer != null)
+			if (_sprite_renderer_not_null())
 			{
 				_spriteRenderer.flipX = state;
 			}
@@ -410,5 +422,255 @@ namespace MoreMountains.TopDownEngine
 				_health.OnDeath -= OnDeath;
 			}			
 		}
+
+		#region Collision handling for chaining
+		// Handle both 3D and 2D collisions/triggers so we can detect hits and attempt to chain
+
+		protected virtual void OnCollisionEnter(Collision collision)
+		{
+			if (!_shouldMove) { return; }
+			HandleCollisionWith(collision.gameObject);
+		}
+
+		protected virtual void OnTriggerEnter(Collider other)
+		{
+			if (!_shouldMove) { return; }
+			HandleCollisionWith(other.gameObject);
+		}
+
+		protected virtual void OnCollisionEnter2D(UnityEngine.Collision2D collision)
+		{
+			if (!_shouldMove) { return; }
+			HandleCollisionWith(collision.gameObject);
+		}
+
+		protected virtual void OnTriggerEnter2D(Collider2D other)
+		{
+			if (!_shouldMove) { return; }
+			HandleCollisionWith(other.gameObject);
+		}
+
+		/// <summary>
+		/// Common collision handler: if we hit a damageable target, try to chain
+		/// </summary>
+		/// <param name="other"></param>
+		protected virtual void HandleCollisionWith(GameObject other)
+		{
+			if (other == null) { return; }
+			// ignore owner
+			if (_owner != null && other == _owner) { return; }
+
+			// require a Health on the other to consider it a "hit"
+			var hitHealth = other.MMGetComponentNoAlloc<Health>() ?? other.GetComponentInParent<Health>();
+			if (hitHealth == null) { return; }
+			// ensure it can take damage (same check used elsewhere)
+			try
+			{
+				if (!hitHealth.CanTakeDamageThisFrame()) { return; }
+			}
+			catch
+			{
+				// if method not available for some reason, continue
+				// debug logging
+#if UNITY_EDITOR
+				Debug.Log($"Projectile.HandleCollisionWith hit:{other.name} remainingChains:{_remainingChains} pos:{transform.position}", this);
+#endif
+
+				// if no chaining configured, nothing more to do here
+				if (_remainingChains <= 0)
+				{
+#if UNITY_EDITOR
+					Debug.Log("Projectile: no remaining chains, skipping chain logic.", this);
+#endif
+					return;
+				}
+
+				// attempt to find next target
+				GameObject next = FindClosestValidTarget(transform.position, other);
+				if (next == null)
+				{
+#if UNITY_EDITOR
+					Debug.Log($"Projectile: FindClosestValidTarget returned null. ChainRange:{ChainRange}", this);
+#endif
+					// no target found -> do nothing (no chain)
+					return;
+				}
+
+#if UNITY_EDITOR
+				Debug.Log($"Projectile: chaining from {other.name} to {next.name}", this);
+#endif
+
+				// spawn a new projectile that will continue the chain
+				SpawnChainProjectile(next, other);
+
+				// make current projectile ignore this object after current physics tick so it doesn't re-hit
+				StartCoroutine(DelayIgnoreThenKeep(other));
+
+				// stop current projectile's movement/colliders (visual/behaviour choice)
+				StopAt();
+
+				// decrease remaining chains on this instance (spawned projectile gets its own ChainCount set in SpawnChainProjectile)
+				_remainingChains--;
+			}
+		}
+
+		/// <summary>
+		/// Spawns a chained projectile from this projectile's pool/weapon, pointing to target.
+		/// </summary>
+		protected virtual void SpawnChainProjectile(GameObject target, GameObject hit)
+		{
+			if (_weapon == null) { return; }
+			var pw = _weapon as ProjectileWeapon;
+			if (pw == null)
+			{
+				#if UNITY_EDITOR
+				Debug.LogWarning("Projectile: weapon is not a ProjectileWeapon, cannot spawn chained projectile.", this);
+				#endif
+				return;
+			}
+
+			var pooler = pw.ObjectPooler;
+			if (pooler == null)
+			{
+				#if UNITY_EDITOR
+				Debug.LogWarning("Projectile: weapon's ObjectPooler is null, cannot spawn chained projectile.", this);
+				#endif
+				return;
+			}
+
+			GameObject pooled = pooler.GetPooledGameObject();
+			if (pooled == null)
+			{
+				#if UNITY_EDITOR
+				Debug.LogWarning("Projectile: no pooled object available for chain spawn.", this);
+				#endif
+				return;
+			}
+
+			// position at current projectile's position
+			pooled.transform.position = this.transform.position;
+			Projectile spawned = pooled.GetComponent<Projectile>();
+			if (spawned == null)
+			{
+				#if UNITY_EDITOR
+				Debug.LogWarning("Projectile: pooled object doesn't have a Projectile component.", this);
+				#endif
+				return;
+			}
+
+			// configure spawned projectile BEFORE enabling it so Initialization picks up ChainCount
+			spawned.ChainCount = Mathf.Max(0, _remainingChains - 1); // pass remaining chain count
+			spawned.SetWeapon(pw);
+			spawned.SetOwner(_owner);
+
+			var spawnedDot = spawned.TargetDamageOnTouch;
+			if (spawnedDot != null)
+			{
+				spawnedDot.TargetLayerMask = pw.ProjectileTargetLayerMask;
+				spawnedDot.PrintHitNames = pw.PrintProjectileHitNames;
+				// make spawned projectile ignore the just-hit object to avoid immediate re-hit
+				spawnedDot.IgnoreGameObject(hit);
+			}
+
+			// activate pooled object
+			pooled.SetActive(true);
+
+			// compute direction towards the target and set it
+			Vector3 dir = (target.transform.position - transform.position).normalized;
+			spawned.SetDirection(dir, spawned.transform.rotation, _spawnerIsFacingRight);
+
+			// notify spawn complete if needed
+			spawned.TriggerOnSpawnComplete();
+
+			#if UNITY_EDITOR
+			Debug.Log($"Projectile: spawned chained projectile to {target.name}", this);
+			#endif
+		}
+
+		/// <summary>
+		/// Coroutine: wait one physics tick before adding the target to the ignore list,
+		/// so the target still receives damage from the initial collision.
+		/// </summary>
+		/// <param name="go"></param>
+		protected virtual IEnumerator DelayIgnoreThenKeep(GameObject go)
+		{
+			// Wait one frame to allow collision/damage processing to complete.
+			yield return null;
+			_damageOnTouch?.IgnoreGameObject(go);
+		}
+
+		/// <summary>
+		/// Finds the closest valid target for chaining within ChainRange, excluding 'exclude' and owner.
+		/// Uses DamageOnTouch.TargetLayerMask when available.
+		/// </summary>
+		/// <param name="center"></param>
+		/// <param name="exclude"></param>
+		/// <returns></returns>
+		protected virtual GameObject FindClosestValidTarget(Vector3 center, GameObject exclude)
+		{
+			LayerMask mask = (_damageOnTouch != null) ? _damageOnTouch.TargetLayerMask : ~0;
+
+			GameObject best = null;
+			float bestDist = float.MaxValue;
+
+			// 3D search
+			Collider[] cols = Physics.OverlapSphere(center, ChainRange, mask);
+			if (cols != null)
+			{
+				foreach (var col in cols)
+				{
+					if (col == null) continue;
+					var candidate = col.gameObject;
+					if (candidate == exclude) continue;
+					if (_owner != null && candidate == _owner) continue;
+
+					var h = candidate.MMGetComponentNoAlloc<Health>() ?? candidate.GetComponentInParent<Health>();
+					if (h == null) continue;
+					try
+					{
+						if (!h.CanTakeDamageThisFrame()) continue;
+					}
+					catch { }
+
+					float d = Vector3.Distance(center, candidate.transform.position);
+					if (d < bestDist)
+					{
+						bestDist = d;
+						best = candidate;
+					}
+				}
+			}
+
+			// 2D search if nothing found or just to consider 2D colliders as well
+			Collider2D[] cols2 = Physics2D.OverlapCircleAll(new Vector2(center.x, center.y), ChainRange, mask);
+			if (cols2 != null)
+			{
+				foreach (var col in cols2)
+				{
+					if (col == null) continue;
+					var candidate = col.gameObject;
+					if (candidate == exclude) continue;
+					if (_owner != null && candidate == _owner) continue;
+
+					var h = candidate.MMGetComponentNoAlloc<Health>() ?? candidate.GetComponentInParent<Health>();
+					if (h == null) continue;
+					try
+					{
+						if (!h.CanTakeDamageThisFrame()) continue;
+					}
+					catch { }
+
+					float d = Vector3.Distance(center, candidate.transform.position);
+					if (d < bestDist)
+					{
+						bestDist = d;
+						best = candidate;
+					}
+				}
+			}
+
+			return best;
+		}
+		#endregion
 	}	
 }
