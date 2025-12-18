@@ -10,6 +10,8 @@ public class SkinData
     public int skinID;
     public GameObject[] skinPrefabs;
 }
+
+public class PowerUpPickedSignal : ASignal<PowerUp> {}
 public class CharacterController : MonoBehaviour
 {
     [Header("Secondaries")]
@@ -22,7 +24,6 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private Weapon[] UpgradedWeapons;
     [Tooltip("Số pickup cần thu thập để kích hoạt đổi vũ khí (mặc định = 3)")]
     [SerializeField] private int PickupsNeededForUpgrade = 3;
-
     // số secondary đã được enable
     private int _enabledSecondaries = 0;
     // tổng số pickup đã thu thập hiện tại

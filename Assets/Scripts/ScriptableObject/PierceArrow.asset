@@ -10,15 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d71537a7119746449f5f4312563d74a, type: 3}
-  m_Name: MultishotType
+  m_Name: PierceArrow
   m_EditorClassIdentifier: 
-  displayName: Multi-Arrow
-  icon: {fileID: 21300000, guid: 4fcc66858f3357340a1fddc459c9990a, type: 3}
+  displayName: Pierce-Arrow
+  icon: {fileID: 21300000, guid: 63d144a2b83838340bdebbc2ce9854da, type: 3}
   kind: 0
-  description: Fire multiple arrows
+  description: Fire pierce arrows
   isTimed: 0
   duration: 5
   magnitude: 1
   canStack: 1
-  weapon: 1
-  amount: 1
+  weaponType: 3
+  attackSpeed: 0.5
+  damage: 20
+  projectileCount: 1
+  weapon: {fileID: 0}

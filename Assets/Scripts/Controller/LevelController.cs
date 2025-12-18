@@ -22,6 +22,7 @@ public class LevelController : MMPersistentSingleton<LevelController>
     public int CurrentLevel = 1;
     public WeaponType CurrentWeapon;
     public int skinID;
+    public PowerUp currentPowerUp;
     private Coroutine coroutine;
     
     public void NextLevel()

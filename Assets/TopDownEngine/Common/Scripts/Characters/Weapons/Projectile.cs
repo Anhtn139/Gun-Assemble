@@ -69,7 +69,7 @@ namespace MoreMountains.TopDownEngine
 
 		[Header("Chaining (optional)")]
 		[Tooltip("Number of times this projectile can chain to another target after hitting one (0 = no chaining).")]
-		public int ChainCount = 0;
+		public int ChainCount = 2;
 		[Tooltip("Max distance (world units) to search for the next chain target.")]
 		public float ChainRange = 5f;
 
@@ -98,6 +98,18 @@ namespace MoreMountains.TopDownEngine
 		// chaining runtime
 		protected int _remainingChains = 0;
 
+		// protection flags to avoid this projectile being pooled/destroyed during a chain event
+		protected bool _protectFromDestroyThisFrame = false;
+		protected bool _deferredDestroyRequested = false;
+
+		// prevents multiple chain spawns from the same collision (e.g. multiple callbacks same frame)
+		protected bool _chainingInProgress = false;
+
+		/// <summary>
+		 /// Expose whether this projectile currently can chain (runtime, does not modify serialized ChainCount).
+		 /// </summary>
+		public bool IsChainingActive { get { return _remainingChains > 0; } }
+
 		/// <summary>
 		/// On awake, we store the initial speed of the object 
 		/// </summary>
@@ -113,7 +125,7 @@ namespace MoreMountains.TopDownEngine
 			_rigidBody = GetComponent<Rigidbody> ();
 			_rigidBody2D = GetComponent<Rigidbody2D> ();
 			_initialInvulnerabilityDurationWFS = new WaitForSeconds (InitialInvulnerabilityDuration);
-			if (_spriteRenderer != null) {	_initialFlipX = _spriteRenderer.flipX ;		}
+			if (_sprite_renderer_not_null()) {	_initialFlipX = _spriteRenderer.flipX ;		}
 			_initialLocalScale = transform.localScale;
 		}
 
@@ -161,6 +173,7 @@ namespace MoreMountains.TopDownEngine
 
 			// init chaining
 			_remainingChains = ChainCount;
+			_chainingInProgress = false;
 		}
 
 		// helper to avoid analyzer warnings about sprite renderer usage
@@ -249,7 +262,7 @@ namespace MoreMountains.TopDownEngine
 		{
 			if (_spriteRenderer != null)
 			{
-				_spriteRenderer.flipX = !_sprite_renderer_not_null() ? _spriteRenderer.flipX : !_spriteRenderer.flipX;
+				_spriteRenderer.flipX = !_spriteRenderer.flipX;
 			}	
 			else
 			{
@@ -279,6 +292,66 @@ namespace MoreMountains.TopDownEngine
 		public virtual void SetWeapon(Weapon newWeapon)
 		{
 			_weapon = newWeapon;
+		}
+
+		/// <summary>
+		 /// Runtime-only setter for remaining chain count (does not modify serialized ChainCount)
+		 /// </summary>
+		/// <param name="count"></param>
+		public virtual void SetRemainingChains(int count)
+		{
+			_remainingChains = Mathf.Max(0, count);
+		}
+
+		/// <summary>
+		 /// Override Destroy to defer pooling when we're protecting this instance during a chain event.
+		 /// </summary>
+		public override void Destroy()
+		{
+			// If we're protected for the current frame (chain in progress), defer destruction.
+			if (_protectFromDestroyThisFrame)
+			{
+				_deferredDestroyRequested = true;
+				return;
+			}
+
+			base.Destroy();
+		}
+
+		/// <summary>
+		/// Small coroutine to protect this instance from being pooled/destroyed during the current frame.
+		/// If a destroy was requested while protected, it will be executed after protection ends.
+		/// </summary>
+		protected virtual IEnumerator ProtectFromDestroyOneFrame()
+		{
+			_protectFromDestroyThisFrame = true;
+			yield return null;
+			_protectFromDestroyThisFrame = false;
+			if (_deferredDestroyRequested)
+			{
+				_deferredDestroyRequested = false;
+				base.Destroy();
+			}
+		}
+
+		/// <summary>
+		 /// Small coroutine to reset chaining guard after one frame.
+		 /// Prevents multiple chain spawns from several collision callbacks in the same frame.
+		 /// </summary>
+		protected virtual IEnumerator ResetChainingGuard()
+		{
+			yield return null;
+			_chainingInProgress = false;
+		}
+
+		/// <summary>
+		 /// Deactivate (return to pool) after one frame to let damage callbacks finish.
+		 /// </summary>
+		protected virtual IEnumerator DeactivateAfterFrame()
+		{
+			yield return null;
+			StopAt();
+			base.Destroy();
 		}
 
 		/// <summary>
@@ -382,13 +455,6 @@ namespace MoreMountains.TopDownEngine
 		/// </summary>
 		protected virtual void OnDeath()
 		{
-			// explosion applied before stopping (so damage uses projectile position)
-			/*if (ExplodeOnDeath)
-			{
-				GameObject instigator = (_weapon != null && _weapon.Owner != null) ? _weapon.Owner.gameObject : this.gameObject;
-				ApplyAreaDamage(this.transform.position, ExplosionRadius, ExplosionMinDamage, ExplosionMaxDamage, ExplosionLayerMask, instigator);
-			}*/
-
 			StopAt ();
 		}
 
@@ -420,7 +486,15 @@ namespace MoreMountains.TopDownEngine
 			if (_health != null)
 			{
 				_health.OnDeath -= OnDeath;
-			}			
+			}
+
+			// Reset chaining state and damage ignore list when returned to pool
+			_remainingChains = ChainCount;
+			_damageOnTouch?.ClearIgnoreList();
+			// reset protection flags
+			_protectFromDestroyThisFrame = false;
+			_deferredDestroyRequested = false;
+			_chainingInProgress = false;
 		}
 
 		#region Collision handling for chaining
@@ -500,12 +574,22 @@ namespace MoreMountains.TopDownEngine
 			Debug.Log($"Projectile.HandleCollisionWith hit:{other.name} remainingChains:{_remainingChains} pos:{transform.position}", this);
 #endif
 
+			 // prevent multiple chain redirects in same frame
+			if (_chainingInProgress)
+			{
+#if UNITY_EDITOR
+				Debug.Log("Projectile: chaining already in progress this frame, ignoring duplicate collision.", this);
+#endif
+				return;
+			}
+
 			// if no chaining configured, nothing more to do here
 			if (_remainingChains <= 0)
 			{
 #if UNITY_EDITOR
 				Debug.Log("Projectile: no remaining chains, skipping chain logic.", this);
 #endif
+				// still allow damage to be applied by DamageOnTouch; we won't redirect
 				return;
 			}
 
@@ -520,94 +604,55 @@ namespace MoreMountains.TopDownEngine
 				return;
 			}
 
+			// mark guard to avoid duplicates, reset after one frame
+			_chainingInProgress = true;
+			StartCoroutine(ResetChainingGuard());
+
 #if UNITY_EDITOR
-			Debug.Log($"Projectile: chaining from {other.name} to {next.name}", this);
+			Debug.Log($"Projectile: chaining redirect from {other.name} to {next.name}", this);
 #endif
 
-			// spawn a new projectile that will continue the chain
-			SpawnChainProjectile(next, other);
+			// protect this instance from being destroyed/pooled during the current frame
+			StartCoroutine(ProtectFromDestroyOneFrame());
 
-			// make current projectile ignore this object after current physics tick so it doesn't re-hit
+			// delay ignore so the current target still receives damage this frame
 			StartCoroutine(DelayIgnoreThenKeep(other));
 
-			// stop current projectile's movement/colliders (visual/behaviour choice)
-			StopAt();
+			// Redirect this same projectile toward next target (preserve Y)
+			Vector3 targetPos = next.transform.position;
+			targetPos.y = this.transform.position.y;
+			Vector3 newDir = (targetPos - this.transform.position).normalized;
+			if (newDir == Vector3.zero)
+			{
+				newDir = this.Direction != Vector3.zero ? this.Direction : Vector3.forward;
+			}
 
-			// decrease remaining chains on this instance (spawned projectile gets its own ChainCount set in SpawnChainProjectile)
+			Direction = newDir;
+			_damageOnTouch?.SetKnockbackScriptDirection(newDir);
+
+			// optionally align visuals
+			if (FaceMovement)
+			{
+				switch (MovementVector)
+				{
+					case MovementVectors.Forward:
+						transform.forward = newDir;
+						break;
+					case MovementVectors.Right:
+						transform.right = newDir;
+						break;
+					case MovementVectors.Up:
+						transform.up = newDir;
+						break;
+				}
+			}
+
+			// decrease remaining chains; if none left, deactivate after one frame
 			_remainingChains--;
-		}
-
-		/// <summary>
-		/// Spawns a chained projectile from this projectile's pool/weapon, pointing to target.
-		/// </summary>
-		protected virtual void SpawnChainProjectile(GameObject target, GameObject hit)
-		{
-			if (_weapon == null) { return; }
-			var pw = _weapon as ProjectileWeapon;
-			if (pw == null)
+			if (_remainingChains <= 0)
 			{
-				#if UNITY_EDITOR
-				Debug.LogWarning("Projectile: weapon is not a ProjectileWeapon, cannot spawn chained projectile.", this);
-				#endif
-				return;
+				StartCoroutine(DeactivateAfterFrame());
 			}
-
-			var pooler = pw.ObjectPooler;
-			if (pooler == null)
-			{
-				#if UNITY_EDITOR
-				Debug.LogWarning("Projectile: weapon's ObjectPooler is null, cannot spawn chained projectile.", this);
-				#endif
-				return;
-			}
-
-			GameObject pooled = pooler.GetPooledGameObject();
-			if (pooled == null)
-			{
-				#if UNITY_EDITOR
-				Debug.LogWarning("Projectile: no pooled object available for chain spawn.", this);
-				#endif
-				return;
-			}
-
-			// position at current projectile's position
-			pooled.transform.position = this.transform.position;
-			Projectile spawned = pooled.GetComponent<Projectile>();
-			if (spawned == null)
-			{
-				#if UNITY_EDITOR
-				Debug.LogWarning("Projectile: pooled object doesn't have a Projectile component.", this);
-				#endif
-				return;
-			}
-
-			// configure spawned projectile BEFORE enabling it so Initialization picks up ChainCount
-			spawned.ChainCount = Mathf.Max(0, _remainingChains - 1); // pass remaining chain count
-			spawned.SetWeapon(pw);
-			spawned.SetOwner(_owner);
-
-			var spawnedDot = spawned.TargetDamageOnTouch;
-			if (spawnedDot != null)
-			{
-				spawnedDot.TargetLayerMask = pw.ProjectileTargetLayerMask;
-				spawnedDot.PrintHitNames = pw.PrintProjectileHitNames;
-				// make spawned projectile ignore the just-hit object to avoid immediate re-hit
-				spawnedDot.IgnoreGameObject(hit);
-			}
-
-			// activate pooled object
-			pooled.SetActive(true);
-
-			// compute direction towards the target and set it
-			Vector3 dir = (target.transform.position - transform.position).normalized;
-			spawned.SetDirection(dir, spawned.transform.rotation, _spawnerIsFacingRight);
-
-			// notify spawn complete if needed
-			spawned.TriggerOnSpawnComplete();
-
-			#if UNITY_EDITOR
-			Debug.Log($"Projectile: spawned chained projectile to {target.name}", this);
-			#endif
 		}
 
 		/// <summary>
@@ -625,6 +670,7 @@ namespace MoreMountains.TopDownEngine
 		/// <summary>
 		/// Finds the closest valid target for chaining within ChainRange, excluding 'exclude' and owner.
 		/// Uses DamageOnTouch.TargetLayerMask when available.
+		 /// Only candidates with tag "Enemy" are considered.
 		/// </summary>
 		/// <param name="center"></param>
 		/// <param name="exclude"></param>
@@ -646,6 +692,9 @@ namespace MoreMountains.TopDownEngine
 					var candidate = col.gameObject;
 					if (candidate == exclude) continue;
 					if (_owner != null && candidate == _owner) continue;
+
+					// Only chain to objects tagged "Enemy"
+					if (!candidate.CompareTag("Enemy")) continue;
 
 					var h = candidate.MMGetComponentNoAlloc<Health>() ?? candidate.GetComponentInParent<Health>();
 					if (h == null) continue;
@@ -674,6 +723,9 @@ namespace MoreMountains.TopDownEngine
 					var candidate = col.gameObject;
 					if (candidate == exclude) continue;
 					if (_owner != null && candidate == _owner) continue;
+
+					// Only chain to objects tagged "Enemy"
+					if (!candidate.CompareTag("Enemy")) continue;
 
 					var h = candidate.MMGetComponentNoAlloc<Health>() ?? candidate.GetComponentInParent<Health>();
 					if (h == null) continue;

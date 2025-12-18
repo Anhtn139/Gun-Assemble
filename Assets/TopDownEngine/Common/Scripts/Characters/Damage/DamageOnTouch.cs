@@ -678,10 +678,15 @@ namespace MoreMountains.TopDownEngine
 				}
 			}
 
-			// we apply self damage
-			if (DamageTakenEveryTime + DamageTakenDamageable > 0 && !_colliderHealth.PreventTakeSelfDamage)
+			// we apply self damage only if not a projectile currently chaining
+			float selfDamage = DamageTakenEveryTime + DamageTakenDamageable;
+			if (selfDamage > 0 && !_colliderHealth.PreventTakeSelfDamage)
 			{
-				SelfDamage(DamageTakenEveryTime + DamageTakenDamageable);
+				var proj = this.gameObject.MMGetComponentNoAlloc<Projectile>();
+				if (proj == null || !proj.IsChainingActive)
+				{
+					SelfDamage(selfDamage);
+				}
 			}
 		}
 
@@ -803,7 +808,11 @@ namespace MoreMountains.TopDownEngine
 			float selfDamage = DamageTakenEveryTime + DamageTakenNonDamageable; 
 			if (selfDamage > 0)
 			{
-				SelfDamage(selfDamage);
+				var proj = this.gameObject.MMGetComponentNoAlloc<Projectile>();
+				if (proj == null || !proj.IsChainingActive)
+				{
+					SelfDamage(selfDamage);
+				}
 			}
 			HitNonDamageableFeedback?.PlayFeedbacks(transform.position);
 		}
@@ -815,7 +824,7 @@ namespace MoreMountains.TopDownEngine
 		{
             // if this DamageOnTouch belongs to a Projectile, trigger its area damage immediately
             var projectile = this.gameObject.MMGetComponentNoAlloc<Projectile>();
-            if (projectile != null && projectile.ExplodeOnDeath)
+            if (projectile != null && projectile.ExplodeOnDeath && !projectile.IsChainingActive)
             {
                 // determine instigator (weapon owner if available)
                 GameObject instigator = (projectile.SourceWeapon != null && projectile.SourceWeapon.Owner != null)

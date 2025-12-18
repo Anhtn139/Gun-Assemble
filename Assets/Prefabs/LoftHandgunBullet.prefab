@@ -5014,8 +5014,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   ExplosionInvincibilityDuration: 0.25
-  ChainCount: 2
-  ChainRange: 5
+  ChainCount: 0
+  ChainRange: 10
 --- !u!114 &114102311241470466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5078,8 +5078,8 @@ MonoBehaviour:
     m_Bits: 11008
   Owner: {fileID: 0}
   TriggerFilter: 195
-  MinDamageCaused: 20
-  MaxDamageCaused: 10
+  MinDamageCaused: 1
+  MaxDamageCaused: 1
   TypedDamages: []
   DamageDirectionMode: 1
   DamageCausedKnockbackType: 1

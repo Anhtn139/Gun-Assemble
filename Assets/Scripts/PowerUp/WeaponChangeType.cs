@@ -1,12 +1,14 @@
+using MoreMountains.TopDownEngine;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "PowerUp", menuName = "Scriptable Objects/Weapon")]
 public class WeaponChangeType : PowerUp
 {
-    public enum PowerUpWeapons { Arrow, Multi_Arrow,  Chain_Arrow}
+    public enum PowerUpWeapons { Arrow, Multi_Arrow,  Chain_Arrow, Pierce_Arrow}
     
-    [SerializeField] private PowerUpWeapons weapon;
+    [SerializeField] private PowerUpWeapons weaponType;
     [SerializeField] private float attackSpeed;
     [SerializeField] private float damage;
     [SerializeField] private int projectileCount;
+    [SerializeField] private ProjectileWeapon weapon;
 }
