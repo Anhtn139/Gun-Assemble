@@ -6,27 +6,36 @@ using Image = UnityEngine.UI.Image;
 
 public class PowerUpCard : MonoBehaviour
 {
-    public PowerUp powerUp;
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI nameText;
     [SerializeField] private TextMeshProUGUI descriptionText;
-    [SerializeField] private Toggle button;
-
+    public Toggle button;
+    public PowerUpType powerUpType;
+    private PowerUp _powerUp;
+    
     public void SetPowerUp(PowerUp powerUp)
     {
-        this.powerUp = powerUp;
+        this._powerUp = powerUp;
         icon.sprite = powerUp.icon;
         nameText.text = powerUp.name;
         descriptionText.text = powerUp.description;
     }
-
+    
     private void Awake()
     {
         button.onValueChanged.AddListener(arg0 =>
         {
             if (arg0)
             {
-                LevelController.Instance.currentPowerUp = powerUp;
+                switch (powerUpType)
+                {
+                    case PowerUpType.WeaponChange :
+                        LevelController.Instance.currentPowerUp = _powerUp as WeaponChangeType;
+                        break;
+                    case PowerUpType.AttackSpeed:
+                        LevelController.Instance.currentPowerUp = _powerUp as FireRateType;
+                        break;
+                }
             }
         });
     }

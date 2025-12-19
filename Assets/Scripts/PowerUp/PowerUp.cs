@@ -11,7 +11,7 @@ public class PowerUp : ScriptableObject
     [Tooltip("Icon hiển thị trên UI")]
     public Sprite icon;
     [Tooltip("Loại power-up (dùng để logic/lọc)")]
-    public CharacterLevelController.PowerUpType kind;
+    public PowerUpType kind;
     [TextArea][Tooltip("Mô tả hiển thị cho người chơi")]
     public string description;
 
