@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Collections;
 using MoreMountains.Tools;
 
+public class ApplyProjectileChange : ASignal<float> {}
+
 namespace MoreMountains.TopDownEngine
 {	
 	/// <summary>
@@ -127,6 +129,7 @@ namespace MoreMountains.TopDownEngine
 			_initialInvulnerabilityDurationWFS = new WaitForSeconds (InitialInvulnerabilityDuration);
 			if (_sprite_renderer_not_null()) {	_initialFlipX = _spriteRenderer.flipX ;		}
 			_initialLocalScale = transform.localScale;
+			
 		}
 
 		/// <summary>
@@ -363,7 +366,7 @@ namespace MoreMountains.TopDownEngine
 			if (_damageOnTouch != null)
 			{
 				_damageOnTouch.MinDamageCaused = minDamage;
-				_damageOnTouch.MaxDamageCaused = maxDamage;
+				_damageOnTouch.MaxDamageCaused = maxDamage; 
 			}
 		}
 
@@ -458,6 +461,12 @@ namespace MoreMountains.TopDownEngine
 			StopAt ();
 		}
 
+		void ApplyChanges(float f)
+		{
+			float dame = _damageOnTouch.MaxDamageCaused * f;
+			SetDamage(dame, dame);
+		}
+		
 		/// <summary>
 		/// On enable, we trigger a short invulnerability
 		/// </summary>
@@ -475,6 +484,8 @@ namespace MoreMountains.TopDownEngine
 			{
 				_health.OnDeath += OnDeath;
 			}
+			
+			Signals.Get<ApplyProjectileChange>().AddListener(ApplyChanges);
 		}
 
 		/// <summary>
@@ -495,6 +506,7 @@ namespace MoreMountains.TopDownEngine
 			_protectFromDestroyThisFrame = false;
 			_deferredDestroyRequested = false;
 			_chainingInProgress = false;
+			Signals.Get<ApplyProjectileChange>().RemoveListener(ApplyChanges);
 		}
 
 		#region Collision handling for chaining

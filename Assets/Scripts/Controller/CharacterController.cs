@@ -5,6 +5,7 @@ using UnityEngine;
 using MoreMountains.TopDownEngine;
 using System.Collections;
 using MoreMountains.Tools;
+using System.Collections.Generic; // added
 
 [Serializable]
 public class SkinData
@@ -64,6 +65,9 @@ public class CharacterController : MonoBehaviour
     // global multipliers applied by stat powerups (persist until changed)
     private float _globalDamageMultiplier = 1f;
     private float _globalFireRateMultiplier = 1f;
+
+    // store each weapon's original TimeBetweenUses so we can compute new values relative to its base
+    private readonly Dictionary<Weapon, float> _weaponBaseTimeBetweenUses = new Dictionary<Weapon, float>();
 
     // Level up UI hook: subscriber will display options and call ChoosePowerUp
     public event Action<PowerUpOption[]> OnLevelUpChoicesAvailable;
@@ -171,6 +175,7 @@ public class CharacterController : MonoBehaviour
                 ApplyGlobalStatMultipliers();
                 break;
             case PowerUpOptionType.FireRateBuff:
+                // option.Magnitude is treated as speed multiplier (1.25 = 25% faster)
                 _globalFireRateMultiplier *= option.Magnitude;
                 ApplyGlobalStatMultipliers();
                 break;
@@ -219,55 +224,6 @@ public class CharacterController : MonoBehaviour
 
             case PowerUpType.HealthIncrease:
                 powerUp.Apply(this.gameObject);
-                break;
-        }
-    }
-
-    private IEnumerator ApplyTimedPowerUp(PowerUp powerUp, float duration)
-    {
-        if (powerUp == null) yield break;
-
-        switch (powerUp.kind)
-        {
-            case PowerUpType.WeaponChange:
-                var mainHandle = this.GetComponentInChildren<CharacterHandleWeapon>();
-                if (mainHandle != null)
-                {
-                    var previous = mainHandle.CurrentWeapon;
-                    var weapon = GetWeaponFromPowerUp(powerUp);
-                    if (weapon != null)
-                    {
-                        ApplyEquipMainWeapon(weapon);
-                        yield return new WaitForSeconds(duration);
-                        if (previous != null)
-                        {
-                            mainHandle.ChangeWeapon(previous, previous.name);
-                            SyncSecondariesToMainWeapon();
-                        }
-                    }
-                }
-                break;
-
-            case PowerUpType.DamageIncrease:
-                var magD = HasFloatFieldOrProp(powerUp, "magnitude", out float mD) ? mD : 1.25f;
-                _globalDamageMultiplier *= magD;
-                ApplyGlobalStatMultipliers();
-                yield return new WaitForSeconds(duration);
-                _globalDamageMultiplier = Mathf.Approximately(magD, 0f) ? 1f : _globalDamageMultiplier / magD;
-                ApplyGlobalStatMultipliers();
-                break;
-
-            case PowerUpType.AttackSpeed:
-                var magF = HasFloatFieldOrProp(powerUp, "magnitude", out float mF) ? mF : 1.25f;
-                _globalFireRateMultiplier *= magF;
-                ApplyGlobalStatMultipliers();
-                yield return new WaitForSeconds(duration);
-                _globalFireRateMultiplier = Mathf.Approximately(magF, 0f) ? 1f : _globalFireRateMultiplier / magF;
-                ApplyGlobalStatMultipliers();
-                break;
-
-            case PowerUpType.HealthIncrease:
-                yield return StartCoroutine(powerUp.ApplyTemporary(this.gameObject));
                 break;
         }
     }
@@ -371,46 +327,43 @@ public class CharacterController : MonoBehaviour
     private void ApplyGlobalStatMultipliers()
     {
         var handles = this.GetComponentsInChildren<CharacterHandleWeapon>(true);
+
+        // collect seen weapons so we can purge the cache of bases for destroyed/unassigned weapons
+        var seen = new HashSet<Weapon>();
+
         foreach (var h in handles)
         {
             var w = h.CurrentWeapon;
             if (w == null) continue;
 
-            // try to set commonly used fields/properties via reflection (best-effort)
-            var type = w.GetType();
-
-            // Damage multiplier support (field/property names commonly used)
-            var dmgField = type.GetField("DamageMultiplier");
-            if (dmgField != null && dmgField.FieldType == typeof(float))
+            seen.Add(w);
+            
+            Signals.Get<ApplyProjectileChange>().Dispatch(_globalDamageMultiplier);
+            
+            // Fire rate: apply directly to TimeBetweenUses using weapon-specific base time.
+            if (!_weaponBaseTimeBetweenUses.TryGetValue(w, out float baseTime))
             {
-                dmgField.SetValue(w, _globalDamageMultiplier);
-            }
-            else
-            {
-                var dmgProp = type.GetProperty("DamageMultiplier");
-                if (dmgProp != null && dmgProp.PropertyType == typeof(float) && dmgProp.CanWrite)
-                {
-                    dmgProp.SetValue(w, _globalDamageMultiplier);
-                }
+                baseTime = w.TimeBetweenUses;
+                _weaponBaseTimeBetweenUses[w] = baseTime;
             }
 
-            // Fire rate multiplier / rate support
-            var frField = type.GetField("FireRateMultiplier");
-            if (frField != null && frField.FieldType == typeof(float))
-            {
-                frField.SetValue(w, _globalFireRateMultiplier);
-            }
-            else
-            {
-                var frProp = type.GetProperty("FireRateMultiplier");
-                if (frProp != null && frProp.PropertyType == typeof(float) && frProp.CanWrite)
-                {
-                    frProp.SetValue(w, _globalFireRateMultiplier);
-                }
-            }
+            // _globalFireRateMultiplier is treated as speed multiplier (1.25 = 25% faster).
+            float speed = Mathf.Max(0.0001f, _globalFireRateMultiplier);
+            float newTimeBetweenUses = baseTime / speed;
+            w.TimeBetweenUses = newTimeBetweenUses;
 
             // As a fallback, re-equip the same weapon so its initialization can pick up global multipliers if those are read from a central place
             h.ChangeWeapon(w, w.name);
+        }
+
+        // purge bases for weapons no longer present
+        var keys = _weaponBaseTimeBetweenUses.Keys.ToList();
+        foreach (var k in keys)
+        {
+            if (!seen.Contains(k))
+            {
+                _weaponBaseTimeBetweenUses.Remove(k);
+            }
         }
     }
 

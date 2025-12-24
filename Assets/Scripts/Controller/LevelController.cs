@@ -23,6 +23,7 @@ public class LevelController : MMPersistentSingleton<LevelController>
     public WeaponType CurrentWeapon;
     public int skinID;
     public PowerUp currentPowerUp;
+    public bool isNewGame = true;
     private Coroutine coroutine;
     
     public void NextLevel()
@@ -72,6 +73,7 @@ public class LevelController : MMPersistentSingleton<LevelController>
         Signals.Get<StartGameSignal>().Dispatch();
         if (coroutine != null) return;
         coroutine = StartCoroutine(LoadMySceneAsync(levelName));
+        isNewGame = true;
     }
 
     public IEnumerator LoadMySceneAsync(string sceneName)

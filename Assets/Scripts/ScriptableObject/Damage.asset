@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 693d1a533a540284bbfa7fa2d6fe8163, type: 3}
+  m_Name: Damage
+  m_EditorClassIdentifier: 
+  displayName: Damage Up
+  icon: {fileID: 21300000, guid: 8f4ea45097dc04407901fed4835ea1c6, type: 3}
+  kind: 1
+  description: 'More Damage! '
+  isTimed: 0
+  duration: 5
+  magnitude: 1
+  canStack: 0
+  damage: 0.2

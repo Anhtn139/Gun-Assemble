@@ -11114,12 +11114,7 @@ MonoBehaviour:
     - {fileID: 1139401295432025497}
     - {fileID: 2629729598795453993}
     - {fileID: 5853356519870920971}
-  UpgradedWeapons:
-  - {fileID: 114020998038657194, guid: 785e296329279824c81f69cf13a33a5f, type: 3}
-  - {fileID: 114922138254092764, guid: 8789a3f39ea7d4f40937d483e2a730c4, type: 3}
-  - {fileID: 114277323309942634, guid: 7babf7cc3ed1e214cb38f7a97a3d9868, type: 3}
-  - {fileID: 114277323309942634, guid: 8b2fe1df07a9ad948b24965b64d6aed8, type: 3}
-  ExperienceToLevel: 3
+  ExperienceToLevel: 1
   ExperiencePerPickup: 1
 --- !u!1 &1414199094847710
 GameObject:
