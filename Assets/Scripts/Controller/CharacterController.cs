@@ -62,15 +62,25 @@ public class CharacterController : MonoBehaviour
     // số lần đã áp dụng upgrade (reserved, may be used by external logic)
     private int _upgradeAppliedCount = 0;
 
-    // global multipliers applied by stat powerups (persist until changed)
+    // legacy globals kept for compatibility but not used for stacking across weapons
     private float _globalDamageMultiplier = 1f;
     private float _globalFireRateMultiplier = 1f;
 
     // store each weapon's original TimeBetweenUses so we can compute new values relative to its base
     private readonly Dictionary<Weapon, float> _weaponBaseTimeBetweenUses = new Dictionary<Weapon, float>();
 
+    // per-weapon multipliers: buffs apply only to weapons present at buff time
+    private readonly Dictionary<Weapon, float> _perWeaponDamageMultiplier = new Dictionary<Weapon, float>();
+    private readonly Dictionary<Weapon, float> _perWeaponFireRateMultiplier = new Dictionary<Weapon, float>();
+
+    // store base numeric damage for weapons if DamageMultiplier field/property isn't available
+    private readonly Dictionary<Weapon, float> _weaponBaseDamageValue = new Dictionary<Weapon, float>();
+
     // Level up UI hook: subscriber will display options and call ChoosePowerUp
     public event Action<PowerUpOption[]> OnLevelUpChoicesAvailable;
+
+    // added field near other runtime fields
+    private bool _mainWeaponSetByPowerup = false;
 
     void Start()
     {
@@ -165,19 +175,16 @@ public class CharacterController : MonoBehaviour
         switch (option.OptionType)
         {
             case PowerUpOptionType.EquipMainWeapon:
-                ApplyEquipMainWeapon(option.WeaponPrefab);
+                ApplyEquipMainWeapon(option.WeaponPrefab); // default: sync secondaries
                 break;
             case PowerUpOptionType.AddSecondaryWithWeapon:
                 ApplyAddSecondary(option.WeaponPrefab);
                 break;
             case PowerUpOptionType.DamageBuff:
-                _globalDamageMultiplier *= option.Magnitude;
-                ApplyGlobalStatMultipliers();
+                ApplyDamageBuffToActiveWeapons(option.Magnitude);
                 break;
             case PowerUpOptionType.FireRateBuff:
-                // option.Magnitude is treated as speed multiplier (1.25 = 25% faster)
-                _globalFireRateMultiplier *= option.Magnitude;
-                ApplyGlobalStatMultipliers();
+                ApplyFireRateBuffToActiveWeapons(option.Magnitude);
                 break;
         }
     }
@@ -200,26 +207,47 @@ public class CharacterController : MonoBehaviour
                 var wp = GetWeaponFromPowerUp(powerUp);
                 if (wp != null)
                 {
-                    ApplyEquipMainWeapon(wp);
+                    var mainHandle = this.GetComponentInChildren<CharacterHandleWeapon>();
+                    var mainCurrent = mainHandle?.CurrentWeapon;
+
+                    // If this is the first weapon selected via power-up -> set main weapon
+                    // IMPORTANT: do NOT enable secondaries on first pick — pass syncSecondaries=false
+                    if (!_mainWeaponSetByPowerup)
+                    {
+                        ApplyEquipMainWeapon(wp, false); // do not sync/enable secondaries
+                        _mainWeaponSetByPowerup = true;
+                    }
+                    else
+                    {
+                        // subsequent weapon pick:
+                        // - if chosen equals main's weapon, re-equip main (or handle upgrade logic elsewhere)
+                        if (mainCurrent != null && mainCurrent.name == wp.name)
+                        {
+                            ApplyEquipMainWeapon(wp); // default behaviour (sync allowed)
+                        }
+                        else
+                        {
+                            // if not the same as main, try to add/enable a secondary and equip it
+                            ApplyAddSecondary(wp);
+                        }
+                    }
                 }
                 break;
 
             case PowerUpType.AttackSpeed:
-                var speed = powerUp as FireRateType;
-                if (speed != null)
                 {
-                    var magD = speed.FireRate;
-                    _globalFireRateMultiplier *= magD;
+                    var speed = powerUp as FireRateType;
+                    float mag = (speed != null) ? speed.FireRate : (powerUp.magnitude > 0f ? powerUp.magnitude : 1f);
+                    ApplyFireRateBuffToActiveWeapons(mag);
                 }
-
-                ApplyGlobalStatMultipliers();
                 break;
 
             case PowerUpType.DamageIncrease:
-                var damageType = powerUp as DamageType;
-                var magF = damageType.Damage;
-                _globalDamageMultiplier *= magF;
-                ApplyGlobalStatMultipliers();
+                {
+                    var dmg = powerUp as DamageType;
+                    float mag = (dmg != null) ? dmg.Damage : (powerUp.magnitude > 0f ? powerUp.magnitude : 1f);
+                    ApplyDamageBuffToActiveWeapons(mag);
+                }
                 break;
 
             case PowerUpType.HealthIncrease:
@@ -232,7 +260,138 @@ public class CharacterController : MonoBehaviour
     {
         if (powerUp == null) return null;
         var type = powerUp as WeaponChangeType;
-        return type.weapon;
+        return type?.weapon;
+    }
+
+    // Apply damage multiplier only to weapons that are currently active/equipped at the time of picking
+    private void ApplyDamageBuffToActiveWeapons(float multiplier)
+    {
+        if (multiplier <= 0f) return;
+        var handles = this.GetComponentsInChildren<CharacterHandleWeapon>(true);
+        foreach (var h in handles)
+        {
+            if (h == null) continue;
+            var handleGO = h.gameObject;
+            var ownerCharacter = h.GetComponentInParent<Character>();
+            bool handleActive = (handleGO != null && handleGO.activeInHierarchy) || (ownerCharacter != null && ownerCharacter.gameObject.activeInHierarchy);
+            if (!handleActive) continue;
+
+            var w = h.CurrentWeapon;
+            if (w == null) continue;
+
+            float prev = 1f;
+            _perWeaponDamageMultiplier.TryGetValue(w, out prev);
+            float next = prev * multiplier;
+            _perWeaponDamageMultiplier[w] = next;
+
+            ApplyDamageToWeapon(w, next);
+        }
+    }
+
+    // Apply fire-rate multiplier only to weapons that are currently active/equipped at the time of picking
+    private void ApplyFireRateBuffToActiveWeapons(float speedMultiplier)
+    {
+        if (speedMultiplier <= 0f) return;
+        var handles = this.GetComponentsInChildren<CharacterHandleWeapon>(true);
+        foreach (var h in handles)
+        {
+            if (h == null) continue;
+            var handleGO = h.gameObject;
+            var ownerCharacter = h.GetComponentInParent<Character>();
+            bool handleActive = (handleGO != null && handleGO.activeInHierarchy) || (ownerCharacter != null && ownerCharacter.gameObject.activeInHierarchy);
+            if (!handleActive) continue;
+
+            var w = h.CurrentWeapon;
+            if (w == null) continue;
+
+            float prev = 1f;
+            _perWeaponFireRateMultiplier.TryGetValue(w, out prev);
+            float next = prev * speedMultiplier;
+            _perWeaponFireRateMultiplier[w] = next;
+
+            ApplyFireRateToWeapon(w, next);
+        }
+    }
+
+    // Try to apply damage multiplier to a specific weapon instance
+    private void ApplyDamageToWeapon(Weapon w, float damageMultiplier)
+    {
+        if (w == null) return;
+        var type = w.GetType();
+
+        // try to set DamageMultiplier field/property if present
+        var dmgField = type.GetField("DamageMultiplier", BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+        if (dmgField != null && dmgField.FieldType == typeof(float))
+        {
+            dmgField.SetValue(w, damageMultiplier);
+            return;
+        }
+        var dmgProp = type.GetProperty("DamageMultiplier", BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+        if (dmgProp != null && dmgProp.PropertyType == typeof(float) && dmgProp.CanWrite)
+        {
+            dmgProp.SetValue(w, damageMultiplier);
+            return;
+        }
+
+        // otherwise find a numeric damage-like field/property and scale it relative to a cached base value
+        string[] candidateNames = new[] { "Damage", "WeaponDamage", "DamageCaused", "BaseDamage", "BaseDamageValue" };
+        foreach (var name in candidateNames)
+        {
+            var fi = type.GetField(name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+            if (fi != null && IsNumericType(fi.FieldType))
+            {
+                float baseVal;
+                if (!_weaponBaseDamageValue.TryGetValue(w, out baseVal))
+                {
+                    baseVal = Convert.ToSingle(fi.GetValue(w));
+                    _weaponBaseDamageValue[w] = baseVal;
+                }
+                fi.SetValue(w, Convert.ChangeType(baseVal * damageMultiplier, fi.FieldType));
+                return;
+            }
+            var pi = type.GetProperty(name, BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic);
+            if (pi != null && IsNumericType(pi.PropertyType) && pi.CanWrite)
+            {
+                float baseVal;
+                if (!_weaponBaseDamageValue.TryGetValue(w, out baseVal))
+                {
+                    baseVal = Convert.ToSingle(pi.GetValue(w));
+                    _weaponBaseDamageValue[w] = baseVal;
+                }
+                SetNumericProperty(pi, w, baseVal * damageMultiplier);
+                return;
+            }
+        }
+
+        // fallback: no known place to apply damage multiplier on this weapon
+    }
+
+    // Apply fire-rate multiplier to a specific weapon instance (relative to cached base TimeBetweenUses)
+    private void ApplyFireRateToWeapon(Weapon w, float fireRateMultiplier)
+    {
+        if (w == null) return;
+        if (!_weaponBaseTimeBetweenUses.TryGetValue(w, out float baseTime))
+        {
+            baseTime = w.TimeBetweenUses;
+            _weaponBaseTimeBetweenUses[w] = baseTime;
+        }
+        float speed = Mathf.Max(0.0001f, fireRateMultiplier);
+        w.TimeBetweenUses = baseTime / speed;
+    }
+
+    private bool IsNumericType(Type type)
+    {
+        return type == typeof(float) || type == typeof(double) || type == typeof(int) || type == typeof(long) || type == typeof(decimal);
+    }
+
+    private void SetNumericProperty(PropertyInfo pi, object target, double value)
+    {
+        var pt = pi.PropertyType;
+        if (pt == typeof(float)) pi.SetValue(target, (float)value);
+        else if (pt == typeof(double)) pi.SetValue(target, value);
+        else if (pt == typeof(int)) pi.SetValue(target, (int)Math.Round(value));
+        else if (pt == typeof(long)) pi.SetValue(target, (long)Math.Round(value));
+        else pi.SetValue(target, Convert.ChangeType(value, pt));
     }
 
     private bool HasFloatFieldOrProp(object obj, string name, out float value)
@@ -275,7 +434,8 @@ public class CharacterController : MonoBehaviour
         return false;
     }
 
-    private void ApplyEquipMainWeapon(Weapon chosenWeapon)
+    // Modified: allow skipping secondary sync when equipping main (first power-up should not enable P2/P3)
+    private void ApplyEquipMainWeapon(Weapon chosenWeapon, bool syncSecondaries = true)
     {
         var mainHandle = this.GetComponentInChildren<CharacterHandleWeapon>();
         if (mainHandle == null) return;
@@ -283,7 +443,16 @@ public class CharacterController : MonoBehaviour
         if (chosenWeapon != null)
         {
             mainHandle.ChangeWeapon(chosenWeapon, chosenWeapon.name);
-            SyncSecondariesToMainWeapon();
+            // apply per-weapon multipliers to the main handle (if any exist)
+            ApplyPerWeaponMultipliersForHandle(mainHandle);
+
+            if (syncSecondaries)
+            {
+                // only sync/enable secondaries when explicit sync requested
+                SyncSecondariesToMainWeapon();
+                // After syncing, ensure secondary multipliers applied
+                ApplyGlobalStatMultipliers();
+            }
         }
     }
 
@@ -320,39 +489,38 @@ public class CharacterController : MonoBehaviour
     }
 
     /// <summary>
-    /// Apply global multipliers to all currently equipped weapons.
-    /// Note: Weapon implementations must respect these multipliers for their projectiles.
-    /// This method will try to call well-known APIs by reflection where available; otherwise it will just call ChangeWeapon re-equip to let weapon initialization pick up global multipliers if implemented.
+    /// Apply per-weapon multipliers to all currently active handles.
+    /// This replaces global application: only weapons that have entries in per-weapon dictionaries get modified.
     /// </summary>
     private void ApplyGlobalStatMultipliers()
     {
         var handles = this.GetComponentsInChildren<CharacterHandleWeapon>(true);
 
-        // collect seen weapons so we can purge the cache of bases for destroyed/unassigned weapons
-        var seen = new HashSet<Weapon>();
-
+        // apply only to active handles/owners
         foreach (var h in handles)
         {
+            if (h == null) continue;
+            var handleGO = h.gameObject;
+            var ownerCharacter = h.GetComponentInParent<Character>();
+            bool handleActive = (handleGO != null && handleGO.activeInHierarchy) || (ownerCharacter != null && ownerCharacter.gameObject.activeInHierarchy);
+            if (!handleActive) continue;
+
             var w = h.CurrentWeapon;
             if (w == null) continue;
 
-            seen.Add(w);
-            
-            Signals.Get<ApplyProjectileChange>().Dispatch(_globalDamageMultiplier);
-            
-            // Fire rate: apply directly to TimeBetweenUses using weapon-specific base time.
-            if (!_weaponBaseTimeBetweenUses.TryGetValue(w, out float baseTime))
+            // apply per-weapon damage if exists
+            if (_perWeaponDamageMultiplier.TryGetValue(w, out float dmgMul))
             {
-                baseTime = w.TimeBetweenUses;
-                _weaponBaseTimeBetweenUses[w] = baseTime;
+                ApplyDamageToWeapon(w, dmgMul);
             }
 
-            // _globalFireRateMultiplier is treated as speed multiplier (1.25 = 25% faster).
-            float speed = Mathf.Max(0.0001f, _globalFireRateMultiplier);
-            float newTimeBetweenUses = baseTime / speed;
-            w.TimeBetweenUses = newTimeBetweenUses;
+            // apply per-weapon fire rate if exists
+            if (_perWeaponFireRateMultiplier.TryGetValue(w, out float frMul))
+            {
+                ApplyFireRateToWeapon(w, frMul);
+            }
 
-            // As a fallback, re-equip the same weapon so its initialization can pick up global multipliers if those are read from a central place
+            // re-equip so initialization logic runs (if needed)
             h.ChangeWeapon(w, w.name);
         }
 
@@ -360,10 +528,37 @@ public class CharacterController : MonoBehaviour
         var keys = _weaponBaseTimeBetweenUses.Keys.ToList();
         foreach (var k in keys)
         {
-            if (!seen.Contains(k))
+            var stillPresent = false;
+            var handles2 = this.GetComponentsInChildren<CharacterHandleWeapon>(true);
+            foreach (var hh in handles2)
+            {
+                if (hh?.CurrentWeapon == k) { stillPresent = true; break; }
+            }
+            if (!stillPresent)
             {
                 _weaponBaseTimeBetweenUses.Remove(k);
+                _perWeaponDamageMultiplier.Remove(k);
+                _perWeaponFireRateMultiplier.Remove(k);
+                _weaponBaseDamageValue.Remove(k);
             }
+        }
+    }
+
+    // Apply per-weapon multipliers for a single handle (used after equipping one weapon)
+    private void ApplyPerWeaponMultipliersForHandle(CharacterHandleWeapon handle)
+    {
+        if (handle == null) return;
+        var w = handle.CurrentWeapon;
+        if (w == null) return;
+
+        if (_perWeaponDamageMultiplier.TryGetValue(w, out float dmgMul))
+        {
+            ApplyDamageToWeapon(w, dmgMul);
+        }
+
+        if (_perWeaponFireRateMultiplier.TryGetValue(w, out float frMul))
+        {
+            ApplyFireRateToWeapon(w, frMul);
         }
     }
 
@@ -371,6 +566,7 @@ public class CharacterController : MonoBehaviour
     /// Coroutine: đợi 1 frame để đảm bảo CharacterHandleWeapon/Character đã khởi tạo rồi equip weapon.
     /// Nếu disableAfter true thì sẽ disable GameObject sau khi equip xong.
     /// Ngoài ra đảm bảo Health.MasterHealth = null để tránh redirect damage về main.
+    /// After equipping we re-apply per-weapon multipliers so newly enabled secondaries receive current buffs only if they were targeted previously.
     /// </summary>
     private IEnumerator EquipAfterNextFrame(GameObject characterGO, Weapon weapon, bool disableAfter)
     {
@@ -392,6 +588,8 @@ public class CharacterController : MonoBehaviour
         if (handle != null && weapon != null)
         {
             handle.ChangeWeapon(weapon, weapon.name);
+            // apply per-weapon multipliers for this handle only (no global stacking)
+            ApplyPerWeaponMultipliersForHandle(handle);
         }
 
         if (disableAfter)
@@ -414,10 +612,31 @@ public class CharacterController : MonoBehaviour
         foreach (var s in SecondaryCharacters)
         {
             if (s == null) continue;
-            var secondaryHandle = s.GetComponentInChildren<CharacterHandleWeapon>();
+
+            // ensure secondary is active so its CharacterHandleWeapon can initialize and accept ChangeWeapon
+            bool wasActive = s.activeSelf;
+            if (!wasActive)
+            {
+                s.SetActive(true);
+            }
+
+            // ensure secondary's Health doesn't point to player's/master health
+            var health = s.GetComponentInChildren<Health>();
+            if (health != null)
+            {
+                health.MasterHealth = null;
+                health.InitializeCurrentHealth();
+                health.DamageEnabled();
+            }
+
+            var secondaryHandle = s.GetComponentInChildren<CharacterHandleWeapon>(true);
             if (secondaryHandle == null) continue;
+
             // equip same weapon prefab
             secondaryHandle.ChangeWeapon(currentWeapon, currentWeapon.name);
+
+            // apply per-weapon multipliers to this secondary if any exist for this weapon instance
+            ApplyPerWeaponMultipliersForHandle(secondaryHandle);
         }
     }
 

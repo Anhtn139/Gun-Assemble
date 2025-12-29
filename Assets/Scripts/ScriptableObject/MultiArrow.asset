@@ -24,4 +24,4 @@ MonoBehaviour:
   attackSpeed: 0.5
   damage: 20
   projectileCount: 3
-  weapon: {fileID: 0}
+  weapon: {fileID: 114922138254092764, guid: 8789a3f39ea7d4f40937d483e2a730c4, type: 3}

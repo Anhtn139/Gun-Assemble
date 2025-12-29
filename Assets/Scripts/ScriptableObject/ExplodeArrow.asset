@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d71537a7119746449f5f4312563d74a, type: 3}
-  m_Name: PierceArrow
+  m_Name: ExplodeArrow
   m_EditorClassIdentifier: 
-  displayName: Pierce-Arrow
+  displayName: Explode-Arrow
   icon: {fileID: 21300000, guid: 63d144a2b83838340bdebbc2ce9854da, type: 3}
   kind: 0
-  description: Fire pierce arrows
+  description: Fire explode arrows
   isTimed: 0
   duration: 5
   magnitude: 1
@@ -24,4 +24,4 @@ MonoBehaviour:
   attackSpeed: 0.5
   damage: 20
   projectileCount: 1
-  weapon: {fileID: 0}
+  weapon: {fileID: 114277323309942634, guid: 8b2fe1df07a9ad948b24965b64d6aed8, type: 3}
