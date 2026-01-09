@@ -5016,6 +5016,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8960
   ExplosionInvincibilityDuration: 0.25
+  ChainCount: 0
+  ChainRange: 5
 --- !u!114 &114102311241470466
 MonoBehaviour:
   m_ObjectHideFlags: 0

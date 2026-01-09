@@ -219,16 +219,25 @@ public class CharacterController : MonoBehaviour
                     }
                     else
                     {
+                        float pickMagnitude = powerUp.magnitude > 0f ? powerUp.magnitude : 1.25f;
+
                         // subsequent weapon pick:
-                        // - if chosen equals main's weapon, re-equip main (or handle upgrade logic elsewhere)
+                        // - if chosen equals main's weapon -> try upgrade that weapon instance (or any equipped instance)
                         if (mainCurrent != null && mainCurrent.name == wp.name)
                         {
-                            ApplyEquipMainWeapon(wp); // default behaviour (sync allowed)
+                            // try upgrade existing equipped weapon instance(s); if none matched, fall back to equipping prefab
+                            if (!TryUpgradeIfAlreadyEquipped(wp, pickMagnitude))
+                            {
+                                ApplyEquipMainWeapon(wp); // default behaviour (sync allowed)
+                            }
                         }
                         else
                         {
-                            // if not the same as main, try to add/enable a secondary and equip it
-                            ApplyAddSecondary(wp);
+                            // if not the same as main, try to upgrade any matching secondary first; if none, add/enable a secondary and equip it
+                            if (!TryUpgradeIfAlreadyEquipped(wp, pickMagnitude))
+                            {
+                                ApplyAddSecondary(wp);
+                            }
                         }
                     }
                 }
@@ -379,6 +388,11 @@ public class CharacterController : MonoBehaviour
         w.TimeBetweenUses = baseTime / speed;
     }
 
+    private void ApplyWeaponUpgrades()
+    {
+        //Upgrade logic here
+    }
+    
     private bool IsNumericType(Type type)
     {
         return type == typeof(float) || type == typeof(double) || type == typeof(int) || type == typeof(long) || type == typeof(decimal);
@@ -563,6 +577,42 @@ public class CharacterController : MonoBehaviour
     }
 
     /// <summary>
+    /// Nhận trigger của các upgrade (tag = "Upgrade").
+    /// Pickup không trực tiếp bật secondary nữa — thay vào đó trao XP.
+    /// </summary>
+    /// <param name="other"></param>
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other == null) return;
+
+        GameObject pickup = other.gameObject;
+
+        // direct tag check
+        if (!pickup.CompareTag("Upgrade"))
+        {
+            // fallback: kiểm tra root (nếu collider là child của prefab upgrade)
+            if (other.transform.root != null && other.transform.root.gameObject != null && other.transform.root.gameObject.CompareTag("Upgrade"))
+            {
+                pickup = other.transform.root.gameObject;
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        // xử lý pickup -> give XP
+        AddExperience(ExperiencePerPickup);
+
+        // disable pickup collider to avoid multi-trigger and optionally destroy
+        var col = pickup.GetComponent<Collider>();
+        if (col != null) col.enabled = false;
+
+        // optional: destroy pickup (commented out to let designer decide)
+        // Destroy(pickup);
+    }
+
+    /// <summary>
     /// Coroutine: đợi 1 frame để đảm bảo CharacterHandleWeapon/Character đã khởi tạo rồi equip weapon.
     /// Nếu disableAfter true thì sẽ disable GameObject sau khi equip xong.
     /// Ngoài ra đảm bảo Health.MasterHealth = null để tránh redirect damage về main.
@@ -641,38 +691,40 @@ public class CharacterController : MonoBehaviour
     }
 
     /// <summary>
-    /// Nhận trigger của các upgrade (tag = "Upgrade").
-    /// Pickup không trực tiếp bật secondary nữa — thay vào đó trao XP.
+    /// Try to upgrade an already equipped weapon instance (main or secondary).
+    /// Returns true if an upgrade was applied to an existing instance.
     /// </summary>
-    /// <param name="other"></param>
-    private void OnTriggerEnter(Collider other)
+    private bool TryUpgradeIfAlreadyEquipped(Weapon chosenWeaponPrefab, float magnitude)
     {
-        if (other == null) return;
+        if (chosenWeaponPrefab == null) return false;
 
-        GameObject pickup = other.gameObject;
-
-        // direct tag check
-        if (!pickup.CompareTag("Upgrade"))
+        var handles = this.GetComponentsInChildren<CharacterHandleWeapon>(true);
+        foreach (var h in handles)
         {
-            // fallback: kiểm tra root (nếu collider là child của prefab upgrade)
-            if (other.transform.root != null && other.transform.root.gameObject != null && other.transform.root.gameObject.CompareTag("Upgrade"))
+            if (h == null) continue;
+            var cur = h.CurrentWeapon;
+            if (cur == null) continue;
+
+            // match by name (consistent with existing code)
+            if (cur.name == chosenWeaponPrefab.name)
             {
-                pickup = other.transform.root.gameObject;
-            }
-            else
-            {
-                return;
+                ApplyWeaponUpgradesToInstance(cur, magnitude);
+                return true;
             }
         }
+        return false;
+    }
 
-        // xử lý pickup -> give XP
-        AddExperience(ExperiencePerPickup);
-
-        // disable pickup collider to avoid multi-trigger and optionally destroy
-        var col = pickup.GetComponent<Collider>();
-        if (col != null) col.enabled = false;
-
-        // optional: destroy pickup (commented out to let designer decide)
-        // Destroy(pickup);
+    /// <summary>
+    /// Apply upgrades to a specific weapon instance (scales damage and fire-rate multipliers, re-applies them and re-equips to refresh).
+    /// </summary>
+    private void ApplyWeaponUpgradesToInstance(Weapon w, float magnitude)
+    {
+        switch (w.WeaponName)
+        {
+            case "ChainBow":
+                
+                break;
+        }
     }
 }

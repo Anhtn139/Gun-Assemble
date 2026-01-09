@@ -4,6 +4,7 @@ using System.Collections;
 using MoreMountains.Tools;
 
 public class ApplyProjectileChange : ASignal<float> {}
+public class ApplyWeaponUpgrade : ASignal<string> {}
 
 namespace MoreMountains.TopDownEngine
 {	
@@ -129,9 +130,19 @@ namespace MoreMountains.TopDownEngine
 			_initialInvulnerabilityDurationWFS = new WaitForSeconds (InitialInvulnerabilityDuration);
 			if (_sprite_renderer_not_null()) {	_initialFlipX = _spriteRenderer.flipX ;		}
 			_initialLocalScale = transform.localScale;
-			
+			Signals.Get<ApplyWeaponUpgrade>().AddListener(ApplyUpgrade);
 		}
 
+		void ApplyUpgrade(string s)
+		{
+			switch (s)
+			{
+				case "ChainBow":
+					ChainCount++;
+					break;
+			}
+		}
+		
 		/// <summary>
 		/// Handles the projectile's initial invincibility
 		/// </summary>
