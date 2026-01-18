@@ -30,8 +30,14 @@ public class ChoosePowerUp : MonoBehaviour
     {
         selectPowerUpButton.onClick.AddListener(() =>
         {
-            Signals.Get<PowerUpPickedSignal>().Dispatch(LevelController.Instance.currentPowerUp);
             Time.timeScale = 1f;
+            if (LevelController.Instance.currentPowerUp == null)
+            {
+                return;
+            }
+            Signals.Get<PowerUpPickedSignal>().Dispatch(LevelController.Instance.currentPowerUp);
+            if (LevelController.Instance.currentPowerUp.kind == PowerUpType.WeaponChange)
+                Signals.Get<ChangeWeaponSignal>().Dispatch(LevelController.Instance.currentPowerUp);
         });
     }
 

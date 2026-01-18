@@ -60,7 +60,7 @@ namespace MoreMountains.TopDownEngine
 		[Tooltip("If true, the projectile will apply area damage on death.")]
 		public bool ExplodeOnDeath = false;
 		[Tooltip("Explosion radius (world units).")]
-		public float ExplosionRadius = 2f;
+		public float ExplosionRadius = 1f;
 		[Tooltip("Min damage applied per target in explosion.")]
 		public float ExplosionMinDamage = 10f;
 		[Tooltip("Max damage applied per target in explosion.")]
@@ -140,6 +140,10 @@ namespace MoreMountains.TopDownEngine
 				case "ChainBow":
 					ChainCount++;
 					break;
+				case "ExplodeBow":
+					ExplosionRadius += 0.5f;
+					gameObject.transform.Find("Twirl").localScale += new Vector3(0.5f,0.5f,0.5f);
+ 					break;
 			}
 		}
 		

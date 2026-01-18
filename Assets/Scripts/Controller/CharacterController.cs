@@ -16,6 +16,8 @@ public class SkinData
 
 public class PowerUpPickedSignal : ASignal<PowerUp> {}
 
+public class ExperiencePickupSignals : ASignal<int> {}
+
 public enum PowerUpType
 {
     WeaponChange,
@@ -81,6 +83,7 @@ public class CharacterController : MonoBehaviour
 
     // added field near other runtime fields
     private bool _mainWeaponSetByPowerup = false;
+    private ChoosePowerUp powerUpPopUp;
 
     void Start()
     {
@@ -107,6 +110,7 @@ public class CharacterController : MonoBehaviour
                 }
             }
         }
+        powerUpPopUp = FindAnyObjectByType<UIController>().powerUpPopUp;
     }
 
     // subscribe to PowerUpPickedSignal so external UI can dispatch a PowerUp asset and CharacterController will apply it
@@ -130,8 +134,12 @@ public class CharacterController : MonoBehaviour
         if (_currentExperience >= ExperienceToLevel)
         {
             _currentExperience = 0;
-            PublishLevelUpChoices();
-        }
+            if (powerUpPopUp != null)
+            {
+                powerUpPopUp.gameObject.SetActive(true);
+            }
+        } 
+        Signals.Get<ExperiencePickupSignals>().Dispatch(_currentExperience);
     }
 
     /// <summary>
@@ -609,7 +617,7 @@ public class CharacterController : MonoBehaviour
         if (col != null) col.enabled = false;
 
         // optional: destroy pickup (commented out to let designer decide)
-        // Destroy(pickup);
+        Destroy(pickup);
     }
 
     /// <summary>
@@ -708,23 +716,10 @@ public class CharacterController : MonoBehaviour
             // match by name (consistent with existing code)
             if (cur.name == chosenWeaponPrefab.name)
             {
-                ApplyWeaponUpgradesToInstance(cur, magnitude);
+                Signals.Get<ApplyWeaponUpgrade>().Dispatch(cur.WeaponName);
                 return true;
             }
         }
         return false;
-    }
-
-    /// <summary>
-    /// Apply upgrades to a specific weapon instance (scales damage and fire-rate multipliers, re-applies them and re-equips to refresh).
-    /// </summary>
-    private void ApplyWeaponUpgradesToInstance(Weapon w, float magnitude)
-    {
-        switch (w.WeaponName)
-        {
-            case "ChainBow":
-                
-                break;
-        }
     }
 }

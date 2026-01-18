@@ -325,7 +325,17 @@ namespace MoreMountains.TopDownEngine
 					break;
 			}
 		}
-        
+
+		void ApplyUpgrade(string upgradeName)
+		{
+			switch (upgradeName)
+			{
+				case "MultiBow":
+					ProjectilesPerShot++;
+					break;
+			}
+		}
+		
 		/// <summary>
 		/// On enable we start listening for events
 		/// </summary>
@@ -340,6 +350,11 @@ namespace MoreMountains.TopDownEngine
 		protected virtual void OnDisable()
 		{
 			this.MMEventStopListening<TopDownEngineEvent>();
+		}
+
+		private void Awake()
+		{
+			Signals.Get<ApplyWeaponUpgrade>().AddListener(ApplyUpgrade);
 		}
 	}
 }

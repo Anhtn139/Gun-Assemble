@@ -3136,6 +3136,8 @@ MonoBehaviour:
   CurrentLevel: 1
   CurrentWeapon: 0
   skinID: 0
+  currentPowerUp: {fileID: 0}
+  isNewGame: 1
 --- !u!4 &806672604
 Transform:
   m_ObjectHideFlags: 0
@@ -5923,7 +5925,7 @@ PrefabInstance:
     - target: {fileID: 6342386365369796527, guid: 9939310d4f628614688d140a4cd6c945,
         type: 3}
       propertyPath: levelInfo.TotalEnemy
-      value: 4
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7551338603098300373, guid: 9939310d4f628614688d140a4cd6c945,
         type: 3}

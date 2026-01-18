@@ -5010,8 +5010,8 @@ MonoBehaviour:
   DamageOwner: 0
   ExplodeOnDeath: 1
   ExplosionRadius: 3
-  ExplosionMinDamage: 100
-  ExplosionMaxDamage: 100
+  ExplosionMinDamage: 40
+  ExplosionMaxDamage: 40
   ExplosionLayerMask:
     serializedVersion: 2
     m_Bits: 8960
@@ -12403,10 +12403,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4585949775055698}
     m_Modifications:
+    - target: {fileID: 827060538143873438, guid: ccf2e69d5a070014390702831685c1b5,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 827060538143873438, guid: ccf2e69d5a070014390702831685c1b5,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 827060538143873438, guid: ccf2e69d5a070014390702831685c1b5,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 827060538143873438, guid: ccf2e69d5a070014390702831685c1b5,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3979549648519048340, guid: ccf2e69d5a070014390702831685c1b5,
         type: 3}
       propertyPath: m_Name
       value: TankCannonExplosion
+      objectReference: {fileID: 0}
+    - target: {fileID: 6392070392049872768, guid: ccf2e69d5a070014390702831685c1b5,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6392070392049872768, guid: ccf2e69d5a070014390702831685c1b5,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6392070392049872768, guid: ccf2e69d5a070014390702831685c1b5,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6392070392049872768, guid: ccf2e69d5a070014390702831685c1b5,
         type: 3}
@@ -12457,6 +12492,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6392070392049872768, guid: ccf2e69d5a070014390702831685c1b5,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

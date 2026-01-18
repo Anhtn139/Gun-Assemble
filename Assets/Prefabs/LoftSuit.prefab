@@ -11114,7 +11114,7 @@ MonoBehaviour:
     - {fileID: 1139401295432025497}
     - {fileID: 2629729598795453993}
     - {fileID: 5853356519870920971}
-  ExperienceToLevel: 1
+  ExperienceToLevel: 3
   ExperiencePerPickup: 1
 --- !u!1 &1414199094847710
 GameObject:

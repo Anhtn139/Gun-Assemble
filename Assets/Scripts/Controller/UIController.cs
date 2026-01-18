@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class LoadingSignal : ASignal<bool>{}
-public class ChangeWeaponSignal : ASignal<WeaponType, int>{}
+public class ChangeWeaponSignal : ASignal<PowerUp>{}
 public class StartGameSignal : ASignal{}
 public class UIController : MonoBehaviour
 {
@@ -19,30 +19,33 @@ public class UIController : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gunText;
     [SerializeField] Sprite[] miniSprites;
     [SerializeField] private Sprite[] gunSprites;
-    [SerializeField] private GameObject[] minionCount;
+    [SerializeField] private Image[] minionCount;
     [SerializeField] private TextMeshProUGUI timeText;
     [SerializeField] private TextMeshProUGUI enemyText;
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private Image[] imagesSkin;
     [SerializeField] private Sprite[] spritesSkin;
+    [SerializeField] private GameObject expFill;
+    public ChoosePowerUp powerUpPopUp;
     private int totalEnemy;
     private float totalTime;
+    private int totalWeapon = -1;
 
     // countdown coroutine handle
     protected Coroutine _countdownCoroutine = null;
 
     protected void Awake()
     {
-        Signals.Get<ChangeWeaponSignal>().AddOnlyListener((type, i) =>
+        Signals.Get<ChangeWeaponSignal>().AddOnlyListener((type) =>
         {
-            foreach (var img in minionCount) img.SetActive(false);
-            for (int j = 0; j < i; j++)
-            {
-                minionCount[j].SetActive(true);
-            }
-            gunImg.sprite = gunSprites[(int)type];
+            /*foreach (var img in minionCount) 
+                img.gameObject.SetActive(false);*/
+            totalWeapon++;
+            minionCount[totalWeapon].gameObject.SetActive(true);
+            minionCount[totalWeapon].sprite = type.icon;
+            /*gunImg.sprite = gunSprites[(int)type];
             miniImg.sprite = miniSprites[(int)type];
-            gunText.text = type.ToString().Replace("_", " ");
+            gunText.text = type.ToString().Replace("_", " ");*/
         });
         Signals.Get<KillEnemySignal>().AddOnlyListener(() =>
         {
@@ -57,6 +60,11 @@ public class UIController : MonoBehaviour
         Signals.Get<StartGameSignal>().AddOnlyListener(() =>
         {
             
+        });
+        
+        Signals.Get<ExperiencePickupSignals>().AddOnlyListener(i =>
+        {
+            expFill.transform.localScale = new Vector3(i/3f, 1f, 1f);
         });
     }
     

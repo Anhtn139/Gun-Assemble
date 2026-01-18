@@ -35,6 +35,9 @@ public class PowerUpCard : MonoBehaviour
                     case PowerUpType.AttackSpeed:
                         LevelController.Instance.currentPowerUp = _powerUp as FireRateType;
                         break;
+                    case PowerUpType.DamageIncrease:
+                        LevelController.Instance.currentPowerUp = _powerUp as DamageType;
+                        break;
                 }
             }
         });

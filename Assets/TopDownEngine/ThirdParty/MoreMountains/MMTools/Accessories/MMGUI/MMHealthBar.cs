@@ -424,12 +424,12 @@ namespace MoreMountains.Tools
 		/// <returns>The hide bar.</returns>
 		protected virtual IEnumerator FinalHideBar()
 		{
-			_finalHideStarted = true;
-			if (InstantiatedOnDeath != null)
+			if (InstantiatedOnDeath != null && !_finalHideStarted)
 			{
 				GameObject instantiatedOnDeath = Instantiate(InstantiatedOnDeath, this.transform.position + HealthBarOffset, this.transform.rotation);
 				SceneManager.MoveGameObjectToScene(instantiatedOnDeath.gameObject, this.gameObject.scene);
 			}
+			_finalHideStarted = true;
 			if (HideBarAtZeroDelay == 0)
 			{
 				_showBar = false;
