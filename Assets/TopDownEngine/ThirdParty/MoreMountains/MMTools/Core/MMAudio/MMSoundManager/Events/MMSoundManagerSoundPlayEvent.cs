@@ -42,7 +42,7 @@ namespace MoreMountains.Tools
 			bool soloSingleTrack = false, bool soloAllTracks = false, bool autoUnSoloOnEnd = false,  
 			bool bypassEffects = false, bool bypassListenerEffects = false, bool bypassReverbZones = false, int priority = 128, float reverbZoneMix = 1f,
 			float dopplerLevel = 1f, int spread = 0, AudioRolloffMode rolloffMode = AudioRolloffMode.Logarithmic, float minDistance = 1f, float maxDistance = 500f, 
-			AudioResource audioResourceToPlay = null)
+			AudioSource audioResourceToPlay = null)
 		{
 			MMSoundManagerPlayOptions options = MMSoundManagerPlayOptions.Default;
 			options.MmSoundManagerTrack = mmSoundManagerTrack;
@@ -78,4 +78,5 @@ namespace MoreMountains.Tools
 			return OnEvent?.Invoke(audioClip, options);
 		}
 	}
+	
 }

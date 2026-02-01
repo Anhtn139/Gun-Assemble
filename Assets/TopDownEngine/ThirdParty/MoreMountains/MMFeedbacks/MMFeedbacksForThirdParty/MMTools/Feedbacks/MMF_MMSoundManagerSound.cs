@@ -74,7 +74,7 @@ namespace MoreMountains.Feedbacks
 		/// alternatively, instead of an audio clip you can specify an AudioResource, in which case the Sfx above will be ignored, and the AudioResource will be used
 		[Tooltip("alternatively, instead of an audio clip you can specify an AudioResource, in which case the Sfx above will be ignored, and the AudioResource will be used")]
 		[MMFEnumCondition("Source", (int)Sources.AudioResource)]
-		public AudioResource AudioResourceToPlay;
+		public AudioSource AudioResourceToPlay;
 
 		[MMFInspectorGroup("Random Sound", true, 39, true)]
         
@@ -469,7 +469,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="sfx"></param>
 		/// <param name="position"></param>
 		/// <param name="intensity"></param>
-		protected virtual void PlaySound(AudioClip sfx, Vector3 position, float intensity, AudioResource audioResource = null)
+		protected virtual void PlaySound(AudioClip sfx, Vector3 position, float intensity, AudioSource audioResource = null)
 		{
 			if (DoNotPlayIfClipAlreadyPlaying) 
 			{
@@ -704,7 +704,7 @@ namespace MoreMountains.Feedbacks
 		/// <param name="sfx"></param>
 		/// <param name="volume"></param>
 		/// <param name="pitch"></param>
-		protected virtual void PlayAudioSource(AudioSource audioSource, AudioClip sfx, float volume, float pitch, float time, float playbackDuration, AudioResource audioResourceToPlay)
+		protected virtual void PlayAudioSource(AudioSource audioSource, AudioClip sfx, float volume, float pitch, float time, float playbackDuration, AudioSource audioResourceToPlay)
 		{
 			// we set that audio source clip to the one in parameters
 			if (audioResourceToPlay == null)
@@ -714,7 +714,7 @@ namespace MoreMountains.Feedbacks
 			}
 			else
 			{
-				audioSource.resource = audioResourceToPlay;
+				/*audioSource.clip = audioResourceToPlay;*/
 			}
 			// we set the audio source volume to the one in parameters
 			audioSource.volume = volume;

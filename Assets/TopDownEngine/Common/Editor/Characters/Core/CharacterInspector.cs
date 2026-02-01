@@ -121,8 +121,8 @@ namespace MoreMountains.TopDownEngine
 				rigidbody2D.simulated = true;
 				rigidbody2D.useAutoMass = false;
 				rigidbody2D.mass = 1;
-				rigidbody2D.linearDamping = 1;
-				rigidbody2D.angularDamping = 0.05f;
+				rigidbody2D.drag = 1;
+				rigidbody2D.angularDrag = 0.05f;
 				rigidbody2D.gravityScale = 0;
 				rigidbody2D.interpolation = RigidbodyInterpolation2D.Interpolate;
 				rigidbody2D.sleepMode = RigidbodySleepMode2D.StartAwake;
@@ -161,8 +161,8 @@ namespace MoreMountains.TopDownEngine
 				// adds a rigidbody
 				Rigidbody rigidbody = (character.GetComponent<Rigidbody>() == null) ? character.gameObject.AddComponent<Rigidbody>() : character.GetComponent<Rigidbody>();
 				rigidbody.mass = 1;
-				rigidbody.linearDamping = 0;
-				rigidbody.angularDamping = 0.05f;
+				rigidbody.drag = 0;
+				rigidbody.angularDrag = 0.05f;
 				rigidbody.interpolation = RigidbodyInterpolation.None;
 				rigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
 				rigidbody.useGravity = true;

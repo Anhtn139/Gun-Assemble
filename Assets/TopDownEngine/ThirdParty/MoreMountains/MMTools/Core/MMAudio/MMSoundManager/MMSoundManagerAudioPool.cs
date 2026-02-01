@@ -58,7 +58,7 @@ namespace MoreMountains.Tools
 					yield return null;
 				}
 			}
-			if (source.resource != null)
+			if (source.clip != null)
 			{
 				while (source.isPlaying)
 				{
@@ -90,7 +90,7 @@ namespace MoreMountains.Tools
 						yield return null;
 					}
 				}
-				if (source.resource != null)
+				if (source.clip != null)
 				{
 					while (source.isPlaying)
 					{

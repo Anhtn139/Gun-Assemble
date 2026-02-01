@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections;
+﻿﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
+
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.Build.Profile;
 #endif
 
 namespace MoreMountains.TopDownEngine
 {
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 	/// <summary>
-	/// This class lets you specify (in code, by editing it) symbols that will be added to the build settings' define symbols list automatically
+	/// This class lets you specify (in code) symbols that will be added
+	/// to the build settings define symbols list automatically
 	/// </summary>
 	[InitializeOnLoad]
 	public class TopDownEngineDefineSymbols
@@ -26,30 +26,45 @@ namespace MoreMountains.TopDownEngine
 		};
 
 		/// <summary>
-		/// As soon as this class has finished compiling, adds the specified define symbols to the build settings
+		/// As soon as this class has finished compiling,
+		/// adds the specified define symbols to the build settings
 		/// </summary>
 		static TopDownEngineDefineSymbols()
 		{
-			BuildProfile activeProfile = BuildProfile.GetActiveBuildProfile();
+			AddDefineSymbols(Symbols);
+		}
 
-			if (activeProfile != null)
+		private static void AddDefineSymbols(string[] symbols)
+		{
+			BuildTargetGroup targetGroup =
+				BuildPipeline.GetBuildTargetGroup(EditorUserBuildSettings.activeBuildTarget);
+
+			string definesString =
+				PlayerSettings.GetScriptingDefineSymbolsForGroup(targetGroup);
+
+			List<string> definesList = definesString
+				.Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries)
+				.ToList();
+
+			bool changed = false;
+
+			foreach (string symbol in symbols)
 			{
-				string[] currentDefines = activeProfile.scriptingDefines;
-				if (!Array.Exists(currentDefines, define => define == Symbols[0]))
+				if (!definesList.Contains(symbol))
 				{
-					var updatedDefines = new List<string>(currentDefines);
-					updatedDefines.Add(Symbols[0]);
-					activeProfile.scriptingDefines = updatedDefines.ToArray();
+					definesList.Add(symbol);
+					changed = true;
 				}
 			}
-			else
+
+			if (changed)
 			{
-				string scriptingDefinesString = PlayerSettings.GetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup));
-				List<string> scriptingDefinesStringList = scriptingDefinesString.Split(';').ToList();
-				scriptingDefinesStringList.AddRange(Symbols.Except(scriptingDefinesStringList));
-				PlayerSettings.SetScriptingDefineSymbols(UnityEditor.Build.NamedBuildTarget.FromBuildTargetGroup(EditorUserBuildSettings.selectedBuildTargetGroup), string.Join(";", scriptingDefinesStringList.ToArray()));
+				PlayerSettings.SetScriptingDefineSymbolsForGroup(
+					targetGroup,
+					string.Join(";", definesList)
+				);
 			}
 		}
 	}
-	#endif
+#endif
 }

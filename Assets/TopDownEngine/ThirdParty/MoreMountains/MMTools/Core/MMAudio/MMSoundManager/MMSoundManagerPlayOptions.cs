@@ -16,7 +16,7 @@ namespace MoreMountains.Tools
 		public bool Initialized;
 
 		[HideInInspector]
-		public AudioResource AudioResourceToPlay;
+		public AudioSource AudioResourceToPlay;
 		
 		[Header("Track")]
 		/// the track on which to play the sound

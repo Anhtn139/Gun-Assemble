@@ -99,7 +99,7 @@ namespace MoreMountains.InventoryEngine
 			}
 			_movement = new Vector2(_horizontalMove, _verticalMove);
 			_movement *= CharacterSpeed * Time.deltaTime;
-			_rigidBody2D.linearVelocity = _movement;
+			_rigidBody2D.velocity = _movement;
 		}
 	    
 		/// <summary>
@@ -119,7 +119,7 @@ namespace MoreMountains.InventoryEngine
 		{
 			if (_animator != null)
 			{
-				_animator.SetFloat("Speed", _rigidBody2D.linearVelocity.magnitude);
+				_animator.SetFloat("Speed", _rigidBody2D.velocity.magnitude);
 				_animator.SetInteger("Armor", _currentArmor);
 			}
 		}

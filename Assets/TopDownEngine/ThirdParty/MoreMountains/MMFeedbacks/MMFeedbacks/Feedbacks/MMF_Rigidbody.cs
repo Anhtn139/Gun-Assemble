@@ -94,7 +94,7 @@ namespace MoreMountains.Feedbacks
 		{
 			if(ResetVelocityOnPlay)
 			{
-				rb.linearVelocity = Vector3.zero;
+				rb.velocity = Vector3.zero;
 			}
 
 			if (ForwardForce)

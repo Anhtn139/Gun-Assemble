@@ -174,6 +174,19 @@ namespace MoreMountains.Tools
 		/// <param name="rolloffMode"></param>
 		/// <param name="minDistance"></param>
 		/// <param name="maxDistance"></param>
+		/// <param name="doNotAutoRecycleIfNotDonePlaying"></param>
+		/// <param name="playbackTime"></param>
+		/// <param name="playbackDuration"></param>
+		/// <param name="attachToTransform"></param>
+		/// <param name="useSpreadCurve"></param>
+		/// <param name="spreadCurve"></param>
+		/// <param name="useCustomRolloffCurve"></param>
+		/// <param name="customRolloffCurve"></param>
+		/// <param name="useSpatialBlendCurve"></param>
+		/// <param name="spatialBlendCurve"></param>
+		/// <param name="useReverbZoneMixCurve"></param>
+		/// <param name="reverbZoneMixCurve"></param>
+		/// <param name="audioResourceToPlay"></param>
 		/// <returns></returns>
 		public virtual AudioSource PlaySound(AudioClip audioClip, MMSoundManagerTracks mmSoundManagerTrack, Vector3 location, 
 			bool loop = false, float volume = 1.0f, int ID = 0,
@@ -187,7 +200,7 @@ namespace MoreMountains.Tools
 			bool doNotAutoRecycleIfNotDonePlaying = false, float playbackTime = 0f, float playbackDuration = 0f, Transform attachToTransform = null,
 			bool useSpreadCurve = false, AnimationCurve spreadCurve = null, bool useCustomRolloffCurve = false, AnimationCurve customRolloffCurve = null,
 			bool useSpatialBlendCurve = false, AnimationCurve spatialBlendCurve = null, bool useReverbZoneMixCurve = false, AnimationCurve reverbZoneMixCurve = null, 
-			AudioResource audioResourceToPlay = null
+			AudioSource audioResourceToPlay = null
 		)
 		{
 			if (this == null) { return null; }
@@ -229,7 +242,7 @@ namespace MoreMountains.Tools
 			}
 			else
 			{
-				audioSource.resource = audioResourceToPlay;
+				/*audioSource.clip = audioResourceToPlay;*/
 			}
 			audioSource.pitch = pitch;
 			audioSource.spatialBlend = spatialBlend;

@@ -186,11 +186,11 @@ namespace MoreMountains.Tools
 			switch (Mode)
 			{
 				case Modes.Rigidbody:
-					Velocity = _rigidbody.linearVelocity;
+					Velocity = _rigidbody.velocity;
 					break;
 
 				case Modes.Rigidbody2D:
-					Velocity = _rigidbody2D.linearVelocity;
+					Velocity = _rigidbody2D.velocity;
 					break;
 
 				case Modes.Position:

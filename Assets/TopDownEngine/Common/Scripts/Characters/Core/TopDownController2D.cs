@@ -455,7 +455,7 @@ namespace MoreMountains.TopDownEngine
 			base.Reset();
 			if (_rigidBody != null)
 			{
-				_rigidBody.linearVelocity = Vector2.zero;	
+				_rigidBody.velocity = Vector2.zero;	
 			}
 		}
 	}
