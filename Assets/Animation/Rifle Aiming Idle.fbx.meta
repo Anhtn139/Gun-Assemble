@@ -1,518 +1,14 @@
 fileFormatVersion: 2
-guid: e274402e4c839934c817fc0664347c81
+guid: e830207a335cb4f4aa93ca5c03097639
 ModelImporter:
   serializedVersion: 22200
-  internalIDToNameTable:
-  - first:
-      1: 100000
-    second: Ankle_L
-  - first:
-      1: 100002
-    second: Ankle_R
-  - first:
-      1: 100004
-    second: Ball_L
-  - first:
-      1: 100006
-    second: Ball_R
-  - first:
-      1: 100008
-    second: //RootNode
-  - first:
-      1: 100010
-    second: Clavicle_L
-  - first:
-      1: 100012
-    second: Clavicle_R
-  - first:
-      1: 100014
-    second: Elbow_L
-  - first:
-      1: 100016
-    second: Elbow_R
-  - first:
-      1: 100018
-    second: Eyebrows
-  - first:
-      1: 100020
-    second: Eyes
-  - first:
-      1: 100022
-    second: Finger_01
-  - first:
-      1: 100024
-    second: Finger_01 1
-  - first:
-      1: 100026
-    second: Finger_02
-  - first:
-      1: 100028
-    second: Finger_02 1
-  - first:
-      1: 100030
-    second: Finger_03
-  - first:
-      1: 100032
-    second: Finger_03 1
-  - first:
-      1: 100034
-    second: Finger_04
-  - first:
-      1: 100036
-    second: Finger_04 1
-  - first:
-      1: 100038
-    second: Hand_L
-  - first:
-      1: 100040
-    second: Hand_R
-  - first:
-      1: 100042
-    second: Head
-  - first:
-      1: 100044
-    second: Hips
-  - first:
-      1: 100046
-    second: IndexFinger_01
-  - first:
-      1: 100048
-    second: IndexFinger_01 1
-  - first:
-      1: 100050
-    second: IndexFinger_02
-  - first:
-      1: 100052
-    second: IndexFinger_02 1
-  - first:
-      1: 100054
-    second: IndexFinger_03
-  - first:
-      1: 100056
-    second: IndexFinger_03 1
-  - first:
-      1: 100058
-    second: IndexFinger_04
-  - first:
-      1: 100060
-    second: IndexFinger_04 1
-  - first:
-      1: 100062
-    second: Jaw
-  - first:
-      1: 100064
-    second: LowerLeg_L
-  - first:
-      1: 100066
-    second: LowerLeg_R
-  - first:
-      1: 100068
-    second: Neck
-  - first:
-      1: 100070
-    second: Root
-  - first:
-      1: 100072
-    second: Shoulder_L
-  - first:
-      1: 100074
-    second: Shoulder_R
-  - first:
-      1: 100076
-    second: SM_Chr_ScifiWorlds_Female_01
-  - first:
-      1: 100078
-    second: SM_Chr_ScifiWorlds_Male_01
-  - first:
-      1: 100080
-    second: SM_Chr_ScifiWorlds_Scavenger_01
-  - first:
-      1: 100082
-    second: SM_Chr_ScifiWorlds_Soldier_Female_02
-  - first:
-      1: 100084
-    second: SM_Chr_ScifiWorlds_Soldier_Male_01
-  - first:
-      1: 100086
-    second: SM_Chr_ScifiWorlds_Soldier_Male_02
-  - first:
-      1: 100088
-    second: SM_Chr_ScifiWorlds_SpaceSuit_AlienGuy_01
-  - first:
-      1: 100090
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Female_01
-  - first:
-      1: 100092
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Male_01
-  - first:
-      1: 100094
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Male_02
-  - first:
-      1: 100096
-    second: SM_Chr_ScifiWorlds_Strider_Male_01
-  - first:
-      1: 100098
-    second: Spine_01
-  - first:
-      1: 100100
-    second: Spine_02
-  - first:
-      1: 100102
-    second: Spine_03
-  - first:
-      1: 100104
-    second: Thumb_01
-  - first:
-      1: 100106
-    second: Thumb_01 1
-  - first:
-      1: 100108
-    second: Thumb_02
-  - first:
-      1: 100110
-    second: Thumb_02 1
-  - first:
-      1: 100112
-    second: Thumb_03
-  - first:
-      1: 100114
-    second: Thumb_03 1
-  - first:
-      1: 100116
-    second: Toes_L
-  - first:
-      1: 100118
-    second: Toes_R
-  - first:
-      1: 100120
-    second: UpperLeg_L
-  - first:
-      1: 100122
-    second: UpperLeg_R
-  - first:
-      1: 100124
-    second: SM_Chr_ScifiWorlds_Scavenger_02
-  - first:
-      1: 100126
-    second: SM_Chr_ScifiWorlds_Scavenger_03
-  - first:
-      1: 100128
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Alien_Female_01
-  - first:
-      1: 100130
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Female_02
-  - first:
-      1: 100132
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Alien_Male_01
-  - first:
-      4: 400000
-    second: Ankle_L
-  - first:
-      4: 400002
-    second: Ankle_R
-  - first:
-      4: 400004
-    second: Ball_L
-  - first:
-      4: 400006
-    second: Ball_R
-  - first:
-      4: 400008
-    second: //RootNode
-  - first:
-      4: 400010
-    second: Clavicle_L
-  - first:
-      4: 400012
-    second: Clavicle_R
-  - first:
-      4: 400014
-    second: Elbow_L
-  - first:
-      4: 400016
-    second: Elbow_R
-  - first:
-      4: 400018
-    second: Eyebrows
-  - first:
-      4: 400020
-    second: Eyes
-  - first:
-      4: 400022
-    second: Finger_01
-  - first:
-      4: 400024
-    second: Finger_01 1
-  - first:
-      4: 400026
-    second: Finger_02
-  - first:
-      4: 400028
-    second: Finger_02 1
-  - first:
-      4: 400030
-    second: Finger_03
-  - first:
-      4: 400032
-    second: Finger_03 1
-  - first:
-      4: 400034
-    second: Finger_04
-  - first:
-      4: 400036
-    second: Finger_04 1
-  - first:
-      4: 400038
-    second: Hand_L
-  - first:
-      4: 400040
-    second: Hand_R
-  - first:
-      4: 400042
-    second: Head
-  - first:
-      4: 400044
-    second: Hips
-  - first:
-      4: 400046
-    second: IndexFinger_01
-  - first:
-      4: 400048
-    second: IndexFinger_01 1
-  - first:
-      4: 400050
-    second: IndexFinger_02
-  - first:
-      4: 400052
-    second: IndexFinger_02 1
-  - first:
-      4: 400054
-    second: IndexFinger_03
-  - first:
-      4: 400056
-    second: IndexFinger_03 1
-  - first:
-      4: 400058
-    second: IndexFinger_04
-  - first:
-      4: 400060
-    second: IndexFinger_04 1
-  - first:
-      4: 400062
-    second: Jaw
-  - first:
-      4: 400064
-    second: LowerLeg_L
-  - first:
-      4: 400066
-    second: LowerLeg_R
-  - first:
-      4: 400068
-    second: Neck
-  - first:
-      4: 400070
-    second: Root
-  - first:
-      4: 400072
-    second: Shoulder_L
-  - first:
-      4: 400074
-    second: Shoulder_R
-  - first:
-      4: 400076
-    second: SM_Chr_ScifiWorlds_Female_01
-  - first:
-      4: 400078
-    second: SM_Chr_ScifiWorlds_Male_01
-  - first:
-      4: 400080
-    second: SM_Chr_ScifiWorlds_Scavenger_01
-  - first:
-      4: 400082
-    second: SM_Chr_ScifiWorlds_Soldier_Female_02
-  - first:
-      4: 400084
-    second: SM_Chr_ScifiWorlds_Soldier_Male_01
-  - first:
-      4: 400086
-    second: SM_Chr_ScifiWorlds_Soldier_Male_02
-  - first:
-      4: 400088
-    second: SM_Chr_ScifiWorlds_SpaceSuit_AlienGuy_01
-  - first:
-      4: 400090
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Female_01
-  - first:
-      4: 400092
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Male_01
-  - first:
-      4: 400094
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Male_02
-  - first:
-      4: 400096
-    second: SM_Chr_ScifiWorlds_Strider_Male_01
-  - first:
-      4: 400098
-    second: Spine_01
-  - first:
-      4: 400100
-    second: Spine_02
-  - first:
-      4: 400102
-    second: Spine_03
-  - first:
-      4: 400104
-    second: Thumb_01
-  - first:
-      4: 400106
-    second: Thumb_01 1
-  - first:
-      4: 400108
-    second: Thumb_02
-  - first:
-      4: 400110
-    second: Thumb_02 1
-  - first:
-      4: 400112
-    second: Thumb_03
-  - first:
-      4: 400114
-    second: Thumb_03 1
-  - first:
-      4: 400116
-    second: Toes_L
-  - first:
-      4: 400118
-    second: Toes_R
-  - first:
-      4: 400120
-    second: UpperLeg_L
-  - first:
-      4: 400122
-    second: UpperLeg_R
-  - first:
-      4: 400124
-    second: SM_Chr_ScifiWorlds_Scavenger_02
-  - first:
-      4: 400126
-    second: SM_Chr_ScifiWorlds_Scavenger_03
-  - first:
-      4: 400128
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Alien_Female_01
-  - first:
-      4: 400130
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Female_02
-  - first:
-      4: 400132
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Alien_Male_01
-  - first:
-      43: 4300000
-    second: SM_Chr_ScifiWorlds_Soldier_Male_01
-  - first:
-      43: 4300002
-    second: SM_Chr_ScifiWorlds_Soldier_Male_02
-  - first:
-      43: 4300004
-    second: SM_Chr_ScifiWorlds_Strider_Male_01
-  - first:
-      43: 4300006
-    second: SM_Chr_ScifiWorlds_Female_01
-  - first:
-      43: 4300008
-    second: SM_Chr_ScifiWorlds_Male_01
-  - first:
-      43: 4300010
-    second: SM_Chr_ScifiWorlds_Scavenger_01
-  - first:
-      43: 4300012
-    second: SM_Chr_ScifiWorlds_Soldier_Female_02
-  - first:
-      43: 4300014
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Male_01
-  - first:
-      43: 4300016
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Male_02
-  - first:
-      43: 4300018
-    second: SM_Chr_ScifiWorlds_SpaceSuit_AlienGuy_01
-  - first:
-      43: 4300020
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Female_01
-  - first:
-      43: 4300022
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Alien_Female_01
-  - first:
-      43: 4300024
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Female_02
-  - first:
-      43: 4300026
-    second: SM_Chr_ScifiWorlds_Scavenger_02
-  - first:
-      43: 4300028
-    second: SM_Chr_ScifiWorlds_Scavenger_03
-  - first:
-      43: 4300030
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Alien_Male_01
-  - first:
-      74: 7400000
-    second: Take 001
-  - first:
-      95: 9500000
-    second: //RootNode
-  - first:
-      137: 13700000
-    second: SM_Chr_ScifiWorlds_Female_01
-  - first:
-      137: 13700002
-    second: SM_Chr_ScifiWorlds_Male_01
-  - first:
-      137: 13700004
-    second: SM_Chr_ScifiWorlds_Scavenger_01
-  - first:
-      137: 13700006
-    second: SM_Chr_ScifiWorlds_Soldier_Female_02
-  - first:
-      137: 13700008
-    second: SM_Chr_ScifiWorlds_Soldier_Male_01
-  - first:
-      137: 13700010
-    second: SM_Chr_ScifiWorlds_Soldier_Male_02
-  - first:
-      137: 13700012
-    second: SM_Chr_ScifiWorlds_SpaceSuit_AlienGuy_01
-  - first:
-      137: 13700014
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Female_01
-  - first:
-      137: 13700016
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Male_01
-  - first:
-      137: 13700018
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Male_02
-  - first:
-      137: 13700020
-    second: SM_Chr_ScifiWorlds_Strider_Male_01
-  - first:
-      137: 13700022
-    second: SM_Chr_ScifiWorlds_Scavenger_02
-  - first:
-      137: 13700024
-    second: SM_Chr_ScifiWorlds_Scavenger_03
-  - first:
-      137: 13700026
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Alien_Female_01
-  - first:
-      137: 13700028
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Female_02
-  - first:
-      137: 13700030
-    second: SM_Chr_ScifiWorlds_SpaceSuit_Alien_Male_01
+  internalIDToNameTable: []
   externalObjects: {}
   materials:
-    materialImportMode: 0
+    materialImportMode: 2
     materialName: 0
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -535,7 +31,36 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Idle
+      takeName: mixamo.com
+      internalID: -203655887218126122
+      firstFrame: 0
+      lastFrame: 186
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 0
   meshes:
     lODScreenPercentages: []
@@ -544,45 +69,45 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
-    importPhysicalCameras: 0
-    importVisibility: 0
-    importBlendShapes: 0
-    importCameras: 0
-    importLights: 0
-    nodeNameCollisionStrategy: 0
-    fileIdsGeneration: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
     keepQuads: 0
-    weldVertices: 0
+    weldVertices: 1
     bakeAxisConversion: 0
     preserveHierarchy: 0
     skinWeightsMode: 0
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
     optimizeBones: 1
-    meshOptimizationFlags: 1
-    indexFormat: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
-    secondaryUVMarginMethod: 0
+    secondaryUVMarginMethod: 1
     secondaryUVMinLightmapResolution: 40
     secondaryUVMinObjectScale: 1
     secondaryUVPackMargin: 4
     useFileScale: 1
     strictVertexDataChecks: 0
   tangentSpace:
-    normalSmoothAngle: 0
-    normalImportMode: 1
+    normalSmoothAngle: 60
+    normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
-    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
     blendShapeNormalImportMode: 1
     normalSmoothingSource: 0
   referencedClips: []
-  importAnimation: 0
+  importAnimation: 1
   humanDescription:
     serializedVersion: 3
     human:
@@ -925,22 +450,22 @@ ModelImporter:
     - name: Spine_01
       parentName: Hips
       position: {x: -0.10393265, y: 1.3322676e-17, z: 4.6155368e-17}
-      rotation: {x: 0.99499404, y: -0.09967315, z: -0.00072047114, w: 0.0071938634}
+      rotation: {x: 0.99502003, y: -0.099675715, z: 0, w: 0}
       scale: {x: 1, y: 1, z: 1}
     - name: Spine_02
       parentName: Spine_01
       position: {x: -0.18151169, y: 1.5543122e-17, z: -7.101073e-17}
-      rotation: {x: 0.99497455, y: -0.09798191, z: -0.002020976, w: 0.020522574}
+      rotation: {x: 0.99518615, y: -0.098002784, z: -6.0366487e-16, w: -1.2097554e-16}
       scale: {x: 1, y: 1, z: 1}
     - name: Spine_03
       parentName: Spine_02
       position: {x: -0.17903724, y: 2.2204459e-17, z: 7.509725e-17}
-      rotation: {x: 0.99243414, y: -0.11093657, z: -0.005844362, w: 0.052283313}
+      rotation: {x: 0.9938103, y: -0.11109032, z: -8.991473e-16, w: -1.6212238e-16}
       scale: {x: 1, y: 1, z: 1}
     - name: Clavicle_L
       parentName: Spine_03
       position: {x: -0.058011726, y: -0.041914478, z: -0.07447154}
-      rotation: {x: -0.54752, y: 0.59686995, z: -0.39998946, w: -0.42892498}
+      rotation: {x: -0.549019, y: 0.5984773, z: -0.39792946, w: -0.42667934}
       scale: {x: 1, y: 1, z: 1}
     - name: Shoulder_L
       parentName: Clavicle_L
@@ -970,7 +495,7 @@ ModelImporter:
     - name: Finger_03
       parentName: Finger_02
       position: {x: -0.035133272, y: -3.00324e-16, z: 3.7747583e-17}
-      rotation: {x: -0.018261675, y: -0.02307901, z: 0.029866556, w: 0.99912053}
+      rotation: {x: -0.018261667, y: -0.02307901, z: 0.029866548, w: 0.99912053}
       scale: {x: 1, y: 1, z: 1}
     - name: Finger_04
       parentName: Finger_03
@@ -980,7 +505,7 @@ ModelImporter:
     - name: IndexFinger_01
       parentName: Hand_L
       position: {x: -0.10396561, y: 0.003987151, z: 0.026726495}
-      rotation: {x: 0.0034088325, y: -0.08591826, z: 0.0074384673, w: 0.9962686}
+      rotation: {x: 0.0034088315, y: -0.08591826, z: 0.0074384655, w: 0.9962686}
       scale: {x: 1, y: 1, z: 1}
     - name: IndexFinger_02
       parentName: IndexFinger_01
@@ -1015,7 +540,7 @@ ModelImporter:
     - name: Clavicle_R
       parentName: Spine_03
       position: {x: -0.05801534, y: -0.04191418, z: 0.0744715}
-      rotation: {x: 0.6027319, y: 0.5529934, z: 0.42064875, w: -0.3923866}
+      rotation: {x: 0.5984739, y: 0.5490221, z: 0.42668483, w: -0.39792442}
       scale: {x: 1, y: 1, z: 1}
     - name: Shoulder_R
       parentName: Clavicle_R
@@ -1065,7 +590,7 @@ ModelImporter:
     - name: IndexFinger_03 1
       parentName: IndexFinger_02 1
       position: {x: 0.037912127, y: 0.0000032499834, z: -0.00000004545292}
-      rotation: {x: -0.006919838, y: -0.016685165, z: 0.03701993, w: 0.99915135}
+      rotation: {x: -0.0069198417, y: -0.016685165, z: 0.037019946, w: 0.99915135}
       scale: {x: 1, y: 1, z: 1}
     - name: IndexFinger_04 1
       parentName: IndexFinger_03 1
@@ -1249,14 +774,15 @@ ModelImporter:
     hasTranslationDoF: 0
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: e274402e4c839934c817fc0664347c81,
+    type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1
-  avatarSetup: 1
-  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
-  importBlendShapeDeformPercent: 0
-  remapMaterialsIfMaterialImportModeIsNone: 1
+  avatarSetup: 2
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
