@@ -56,6 +56,8 @@ public class CharacterController : MonoBehaviour
     [Tooltip("Số XP nhận mỗi lần nhặt pickup (tag = 'Upgrade')")]
     [SerializeField] private int ExperiencePerPickup = 1;
 
+    [SerializeField] private GameObject[] guns;
+
     // runtime xp
     private int _currentExperience = 0;
 
@@ -465,6 +467,19 @@ public class CharacterController : MonoBehaviour
         if (chosenWeapon != null)
         {
             mainHandle.ChangeWeapon(chosenWeapon, chosenWeapon.name);
+            guns[0].SetActive(false);
+            switch (chosenWeapon.WeaponName)
+            {
+                case "ChainBow":
+                    guns[1].SetActive(true);
+                    break;
+                case "ExplodeBow":
+                    guns[3].SetActive(true);
+                    break;
+                case "MultiBow":
+                    guns[2].SetActive(true);
+                    break;
+            }
             // apply per-weapon multipliers to the main handle (if any exist)
             ApplyPerWeaponMultipliersForHandle(mainHandle);
 
