@@ -8,7 +8,7 @@ public class LevelInfo : ScriptableObject
     public class LevelCondition
     {
         public int LevelName;
-        [Min(0)] public int TotalEnemy = 0;
+        [Min(0)] public int TotalEnergy = 0;
         [Min(0f)] public float TimeToComplete = 300f;
     }
 

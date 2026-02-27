@@ -104,7 +104,7 @@ public class UIController : MonoBehaviour
     
     private void Start()
     {
-        totalEnemy = LevelController.Instance.CurrentLevelCondition.TotalEnemy;
+        totalEnemy = LevelController.Instance.CurrentLevelCondition.TotalEnergy;
         totalTime = LevelController.Instance.CurrentLevelCondition.TimeToComplete;
         enemyText.text = totalEnemy.ToString();
         levelText.text = "Level " + LevelController.Instance.CurrentLevelCondition.LevelName;

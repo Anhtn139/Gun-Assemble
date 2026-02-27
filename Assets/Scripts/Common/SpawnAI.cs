@@ -28,7 +28,7 @@ public class SpawnAI : MonoBehaviour
             Destroy(o);
         }
         
-        spawnCount = LevelController.Instance.CurrentLevelCondition.TotalEnemy;
+        spawnCount = LevelController.Instance.CurrentLevelCondition.TotalEnergy;
         StartCoroutine(SpawnBatchesRoutine());
     }
 
