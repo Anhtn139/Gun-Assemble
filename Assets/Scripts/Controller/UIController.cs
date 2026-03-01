@@ -21,13 +21,15 @@ public class UIController : MonoBehaviour
     [SerializeField] private Sprite[] gunSprites;
     [SerializeField] private Image[] minionCount;
     [SerializeField] private TextMeshProUGUI timeText;
-    [SerializeField] private TextMeshProUGUI enemyText;
+    [SerializeField] private TextMeshProUGUI energyText;
     [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private TextMeshProUGUI gateText;
     [SerializeField] private Image[] imagesSkin;
     [SerializeField] private Sprite[] spritesSkin;
     [SerializeField] private GameObject expFill;
     public ChoosePowerUp powerUpPopUp;
-    private int totalEnemy;
+    private int totalEnergy;
+    private int currentEnergy;
     private float totalTime;
     private int totalWeapon = -1;
 
@@ -49,28 +51,41 @@ public class UIController : MonoBehaviour
         });
         Signals.Get<KillEnemySignal>().AddOnlyListener(() =>
         {
-            totalEnemy--;
-            enemyText.text = totalEnemy.ToString();
-            if (totalEnemy == 0)
+            /*totalEnergy--;
+            energyText.text = totalEnergy.ToString();
+            if (totalEnergy == 0)
             {
                 WinScreen.SetActive(true);
                 StopCountdown();
-            }
+            }*/
         });
         Signals.Get<StartGameSignal>().AddOnlyListener(() =>
         {
             
         });
         
-        Signals.Get<ExperiencePickupSignals>().AddOnlyListener(i =>
+        Signals.Get<EnergyPickupSignals>().AddListener(EnergyPickup);
+    }
+
+    private void OnDisable()
+    {
+        Signals.Get<EnergyPickupSignals>().RemoveListener(EnergyPickup);
+    }
+
+    private void EnergyPickup(int i)
+    {
+        currentEnergy += i;
+        if (currentEnergy == totalEnergy)
         {
-            expFill.transform.localScale = new Vector3(i/3f, 1f, 1f);
-        });
+            gateText.gameObject.SetActive(true);
+        }
+        energyText.text = currentEnergy.ToString();
     }
     
     public void ReloadScene()
     {
         LevelController.Instance.ReloadCurrentScene();
+        gateText.gameObject.SetActive(false);
         PauseScreen.SetActive(false);
         DeathScreen.SetActive(false);
         WinScreen.SetActive(false);
@@ -104,9 +119,9 @@ public class UIController : MonoBehaviour
     
     private void Start()
     {
-        totalEnemy = LevelController.Instance.CurrentLevelCondition.TotalEnergy;
+        totalEnergy = LevelController.Instance.CurrentLevelCondition.TotalEnergy;
         totalTime = LevelController.Instance.CurrentLevelCondition.TimeToComplete;
-        enemyText.text = totalEnemy.ToString();
+        energyText.text = "0";
         levelText.text = "Level " + LevelController.Instance.CurrentLevelCondition.LevelName;
         // show initial time and start countdown
         UpdateTimeText(totalTime);

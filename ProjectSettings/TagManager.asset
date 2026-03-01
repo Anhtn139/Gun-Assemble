@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 3
+  serializedVersion: 2
   tags:
   - LevelBounds
   - FX
@@ -10,6 +10,8 @@ TagManager:
   - World
   - NoMask
   - Upgrade
+  - Weapons
+  - Drone
   layers:
   - Default
   - TransparentFX
@@ -62,5 +64,3 @@ TagManager:
   - name: Above
     uniqueID: 961700441
     locked: 0
-  m_RenderingLayers:
-  - Default

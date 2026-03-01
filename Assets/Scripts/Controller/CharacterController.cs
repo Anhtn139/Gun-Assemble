@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -14,9 +14,11 @@ public class SkinData
     public GameObject[] skinPrefabs;
 }
 
+public class DronePickupSignals : ASignal<int> {}
+
 public class PowerUpPickedSignal : ASignal<PowerUp> {}
 
-public class ExperiencePickupSignals : ASignal<int> {}
+public class EnergyPickupSignals : ASignal<int> {}
 
 public enum PowerUpType
 {
@@ -57,6 +59,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] private int ExperiencePerPickup = 1;
 
     [SerializeField] private GameObject[] guns;
+    [SerializeField] private GameObject[] drones;
 
     // runtime xp
     private int _currentExperience = 0;
@@ -119,14 +122,47 @@ public class CharacterController : MonoBehaviour
     protected virtual void OnEnable()
     {
         Signals.Get<PowerUpPickedSignal>().AddListener(HandlePowerUpPicked);
+        Signals.Get<EnergyPickupSignals>().AddListener(EnergyPickup);
+        Signals.Get<DronePickupSignals>().AddListener(DronePickup);
     }
 
     protected virtual void OnDisable()
     {
         Signals.Get<PowerUpPickedSignal>().RemoveListener(HandlePowerUpPicked);
+        Signals.Get<EnergyPickupSignals>().RemoveListener(EnergyPickup);
+        Signals.Get<DronePickupSignals>().RemoveListener(DronePickup);
     }
 
-    /// <summary>
+    private void EnergyPickup(int i)
+    {
+        
+    }
+    
+    private void DronePickup(int i)
+    {
+        if (drones == null || drones.Length == 0) return;
+
+        foreach (var drone in drones)
+        {
+            if (drone == null || drone.activeSelf) continue;
+
+            drone.SetActive(true);
+
+            var weapons = drone.transform.Find("Weapons");
+            if (weapons != null)
+            {
+                int childCount = weapons.childCount;
+                int modelIndex = Mathf.Clamp(i, 0, childCount - 1);
+                for (int c = 0; c < childCount; c++)
+                {
+                    weapons.GetChild(c).gameObject.SetActive(c == modelIndex);
+                }
+            }
+            break;
+        }
+    }
+    
+    /*/// <summary>
     /// Add xp, check for level up and if reached, build 3 powerup options and raise event for UI selection
     /// </summary>
     /// <param name="xp"></param>
@@ -142,7 +178,7 @@ public class CharacterController : MonoBehaviour
             }
         } 
         Signals.Get<ExperiencePickupSignals>().Dispatch(_currentExperience);
-    }
+    }*/
 
     /// <summary>
     /// Build up to three PowerUpOption choices (stat buffs only now).
@@ -611,22 +647,17 @@ public class CharacterController : MonoBehaviour
         GameObject pickup = other.gameObject;
 
         // direct tag check
-        if (!pickup.CompareTag("Upgrade"))
+        if (pickup.CompareTag("Upgrade"))
         {
-            // fallback: kiểm tra root (nếu collider là child của prefab upgrade)
-            if (other.transform.root != null && other.transform.root.gameObject != null && other.transform.root.gameObject.CompareTag("Upgrade"))
-            {
-                pickup = other.transform.root.gameObject;
-            }
-            else
-            {
-                return;
-            }
+            Signals.Get<EnergyPickupSignals>().Dispatch(1);
         }
 
-        // xử lý pickup -> give XP
-        AddExperience(ExperiencePerPickup);
-
+        if (pickup.CompareTag("Drone"))
+        {
+            var randomUpgrade = pickup.GetComponent<IRandomUpgrade>();
+            int index = randomUpgrade != null ? randomUpgrade.RandomUpgradeIndex : 0;
+            Signals.Get<DronePickupSignals>().Dispatch(index);
+        }
         // disable pickup collider to avoid multi-trigger and optionally destroy
         var col = pickup.GetComponent<Collider>();
         if (col != null) col.enabled = false;
